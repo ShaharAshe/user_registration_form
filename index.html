@@ -84,9 +84,13 @@
         </div>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function (){
+            const PAGE_1 = 0,
+                  PAGE_2 = 1;
+
+            document.addEventListener('DOMContentLoaded', function(){
                 // Example starter JavaScript for disabling form submissions if there are invalid fields
                 (() => {
+                    let page_num = 0;
                     const emails = []
                     const az_pattern = /[a-z]+/
                     const email_pattern = /\S+@\S+ac\.il/
@@ -94,28 +98,37 @@
                     const elem_next_none = document.querySelectorAll('.next-clicked');
                     const elem_prev_none = document.querySelectorAll('.prev-clicked');
 
-                    document.querySelector(".sub-next").addEventListener("click", function(event){
-                        const first_name_ev = document.getElementById("First-Name").value;
-                        const last_name_ev = document.getElementById("Last-Name").value;
+                    const sub_next = document.querySelector(".sub-next");
+
+                    sub_next.addEventListener("click", function(event){
                         const email_ev = document.getElementById("Email").value;
 
-                        console.log(az_pattern.test(first_name_ev))
-                        console.log(az_pattern.test(last_name_ev))
-                        console.log(email_pattern.test(email_ev))
+                        if (page_num === PAGE_1) {
+                            const first_name_ev = document.getElementById("First-Name").value;
+                            const last_name_ev = document.getElementById("Last-Name").value;
 
-                        if(az_pattern.test(first_name_ev)
-                            && az_pattern.test(last_name_ev)
-                                && email_pattern.test(email_ev))
+                            if (az_pattern.test(first_name_ev)
+                                && az_pattern.test(last_name_ev)
+                                && email_pattern.test(email_ev)
+                                &&  !(email_ev in emails))
+                            {
+                                elem_next_none.forEach(div => {
+                                    div.classList.remove('d-none');
+                                });
+
+                                elem_prev_none.forEach(div => {
+                                    div.classList.add('d-none');
+                                });
+
+                                sub_next.innerHTML = "Submit";
+
+                                ++page_num;
+                            }
+                        }
+                        else
                         {
-                            elem_next_none.forEach(div => {
-                                div.classList.remove('d-none');
-                            });
-
-                            elem_prev_none.forEach(div => {
-                                div.classList.add('d-none');
-                            });
-
-                            document.querySelector('div .sub-next').innerHTML = "Submit";
+                            emails.push(email_ev);
+                            sub_next.type = "submit";
                         }
                     })
 
@@ -128,6 +141,7 @@
                             div.classList.add('d-none');
                         });
 
+                        --page_num;
                         document.querySelector('div .sub-next').innerHTML = "Next";
                     })
 
