@@ -20,41 +20,41 @@
                 <div class="col-12">
                     <form class="row g-3 needs-validation" method="post" action="#">
                         <div class="col-md-6 prev-clicked">
-                            <label for="validationCustom01" class="form-label">First name</label>
-                            <input type="text" class="form-control" id="validationCustom01">
+                            <label for="First-Name" class="form-label">First name</label>
+                            <input type="text" class="form-control" id="First-Name">
                             <div class="valid-feedback">Looks good!</div>
                         </div>
                         <div class="col-md-6 prev-clicked">
-                            <label for="validationCustom02" class="form-label">Last name</label>
-                            <input type="text" class="form-control" id="validationCustom02">
+                            <label for="Last-Name" class="form-label">Last name</label>
+                            <input type="text" class="form-control" id="Last-Name">
                             <div class="valid-feedback">Looks good!</div>
                         </div>
                         <div class="col-md-12 prev-clicked">
-                            <label for="validationCustomUsername" class="form-label">Email</label>
+                            <label for="Email" class="form-label">Email</label>
                             <div class="input-group has-validation">
-                                <span class="input-group-text" id="inputGroupPrepend">@</span>
-                                <input type="text" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend">
+                                <span class="input-group-text">@</span>
+                                <input type="text" class="form-control" id="Email" aria-describedby="inputGroupPrepend">
                                 <div class="invalid-feedback">Please choose a username.</div>
                             </div>
                         </div>
                         <div class="col-md-3 d-none next-clicked">
-                            <label for="validationCustom03" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="validationCustom03">
+                            <label for="Password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="Password">
                             <div class="invalid-feedback">Please provide a valid city.</div>
                         </div>
                         <div class="col-md-3 d-none next-clicked">
-                            <label for="validationCustom06" class="form-label">Valid Password</label>
-                            <input type="password" class="form-control" id="validationCustom06">
+                            <label for="Valid-Password" class="form-label">Valid Password</label>
+                            <input type="password" class="form-control" id="Valid-Password">
                             <div class="invalid-feedback">Please provide a valid city.</div>
                         </div>
                         <div class="col-md-3 d-none next-clicked">
-                            <label for="validationCustom04" class="form-label">Date Of Birth</label>
-                            <input type="text" class="form-control" id="validationCustom04">
+                            <label for="Date-Of-Birth" class="form-label">Date Of Birth</label>
+                            <input type="text" class="form-control" id="Date-Of-Birth">
                             <div class="invalid-feedback">Please provide a valid city.</div>
                         </div>
                         <div class="col-md-3 d-none next-clicked">
-                            <label for="validationCustom05" class="form-label">Gender</label>
-                            <select class="form-select" aria-label="Default select example" id="validationCustom05">
+                            <label for="Gender" class="form-label">Gender</label>
+                            <select class="form-select" aria-label="Default select example" id="Gender">
                                 <option selected>Open this select menu</option>
                                 <option value="1">One</option>
                                 <option value="2">Two</option>
@@ -64,7 +64,7 @@
                         <div class="col-6 d-none next-clicked">
                             <div class="input-group">
                                 <span class="input-group-text">Comments</span>
-                                <textarea class="form-control" aria-label="Comments"></textarea>
+                                <textarea class="form-control Comments-elem" aria-label="Comments"></textarea>
                             </div>
                         </div>
                         <div class="col-12">
@@ -87,20 +87,36 @@
             document.addEventListener('DOMContentLoaded', function (){
                 // Example starter JavaScript for disabling form submissions if there are invalid fields
                 (() => {
+                    const emails = []
+                    const az_pattern = /[a-z]+/
+                    const email_pattern = /\S+@\S+ac\.il/
                     const forms = document.querySelectorAll('.needs-validation');
                     const elem_next_none = document.querySelectorAll('.next-clicked');
                     const elem_prev_none = document.querySelectorAll('.prev-clicked');
 
                     document.querySelector(".sub-next").addEventListener("click", function(event){
-                        elem_next_none.forEach(div => {
-                            div.classList.remove('d-none');
-                        });
+                        const first_name_ev = document.getElementById("First-Name").value;
+                        const last_name_ev = document.getElementById("Last-Name").value;
+                        const email_ev = document.getElementById("Email").value;
 
-                        elem_prev_none.forEach(div => {
-                            div.classList.add('d-none');
-                        });
+                        console.log(az_pattern.test(first_name_ev))
+                        console.log(az_pattern.test(last_name_ev))
+                        console.log(email_pattern.test(email_ev))
 
-                        document.querySelector('div .sub-next').innerHTML = "Submit";
+                        if(az_pattern.test(first_name_ev)
+                            && az_pattern.test(last_name_ev)
+                                && email_pattern.test(email_ev))
+                        {
+                            elem_next_none.forEach(div => {
+                                div.classList.remove('d-none');
+                            });
+
+                            elem_prev_none.forEach(div => {
+                                div.classList.add('d-none');
+                            });
+
+                            document.querySelector('div .sub-next').innerHTML = "Submit";
+                        }
                     })
 
                     document.querySelector(".go-prev").addEventListener("click", function(event){
