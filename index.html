@@ -18,7 +18,7 @@
             <!-- The form -->
             <div class="row">
                 <div class="col-12">
-                    <form class="row g-3 needs-validation" method="post" action="#">
+                    <form class="row g-3 needs-validation" method="post" action="#" onsubmit="save_email()">
                         <div class="col-md-6 prev-clicked">
                             <label for="First-Name" class="form-label">First name</label>
                             <input type="text" class="form-control" id="First-Name">
@@ -55,10 +55,10 @@
                         <div class="col-md-3 d-none next-clicked">
                             <label for="Gender" class="form-label">Gender</label>
                             <select class="form-select" aria-label="Default select example" id="Gender">
-                                <option selected>Open this select menu</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
+                                <option selected>Select your gender</option>
+                                <option value="1">Male</option>
+                                <option value="2">Female</option>
+                                <option value="3">Other</option>
                             </select>
                         </div>
                         <div class="col-6 d-none next-clicked">
@@ -84,16 +84,22 @@
         </div>
 
         <script>
-            const PAGE_1 = 0,
-                  PAGE_2 = 1;
+            const PAGE_1 = 0;
 
+            const emails = JSON.parse(localStorage.getItem("storedEmails")) || [];
+            const save_email = () =>{
+                emails.push(document.getElementById("Email").value);
+
+                localStorage.setItem("storedEmails",JSON.stringify(emails));
+            }
             document.addEventListener('DOMContentLoaded', function(){
                 // Example starter JavaScript for disabling form submissions if there are invalid fields
                 (() => {
                     let page_num = 0;
-                    const emails = []
-                    const az_pattern = /[a-z]+/
-                    const email_pattern = /\S+@\S+ac\.il/
+                    const az_pattern = /[a-z]+/;
+                    const email_pattern = /\S+@\S+ac\.il/;
+                    const password_pattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
+
                     const forms = document.querySelectorAll('.needs-validation');
                     const elem_next_none = document.querySelectorAll('.next-clicked');
                     const elem_prev_none = document.querySelectorAll('.prev-clicked');
@@ -107,10 +113,11 @@
                             const first_name_ev = document.getElementById("First-Name").value;
                             const last_name_ev = document.getElementById("Last-Name").value;
 
+                            console.log(emails)
                             if (az_pattern.test(first_name_ev)
                                 && az_pattern.test(last_name_ev)
                                 && email_pattern.test(email_ev)
-                                &&  !(email_ev in emails))
+                                &&  !emails.includes(email_ev))
                             {
                                 elem_next_none.forEach(div => {
                                     div.classList.remove('d-none');
@@ -121,14 +128,40 @@
                                 });
 
                                 sub_next.innerHTML = "Submit";
-
                                 ++page_num;
                             }
                         }
                         else
                         {
-                            emails.push(email_ev);
-                            sub_next.type = "submit";
+                            const password_ev = document.getElementById("Password").value;
+                            const confirm_password_ev = document.getElementById("Password").value;
+                            const date_ev = document.getElementById("Date-Of-Birth").value;
+                            const gender_ev = document.getElementById("Gender").value;
+                            const text_ev = document.querySelector("textarea").textLength;
+
+                            if ((gender_ev === '1' || gender_ev === '2' || gender_ev === '2')
+                                && date_ev
+                            && text_ev <= 100)
+                            {
+                                console.log("111")
+                                const dateObject = new Date(date_ev); // make date value
+                                if (!isNaN(dateObject.getTime())/*check if the date input is valid*/)
+                                {
+                                    console.log("222")
+                                    const currentDate = new Date();
+                                    const userBirthDate = new Date(dateObject.getFullYear() + 18, dateObject.getMonth(), dateObject.getDate());
+
+                                    if (password_pattern.test(password_ev)
+                                        && confirm_password_ev === password_ev
+                                        && userBirthDate <= currentDate)
+                                    {
+                                        console.log("333")
+                                        emails.push(email_ev);
+                                        console.log(emails)
+                                        sub_next.type = "submit"
+                                    }
+                                }
+                            }
                         }
                     })
 
