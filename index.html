@@ -19,17 +19,17 @@
             <div class="row">
                 <div class="col-12">
                     <form class="row g-3 needs-validation" method="post" action="#">
-                        <div class="col-md-6">
+                        <div class="col-md-6 prev-clicked">
                             <label for="validationCustom01" class="form-label">First name</label>
                             <input type="text" class="form-control" id="validationCustom01">
                             <div class="valid-feedback">Looks good!</div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 prev-clicked">
                             <label for="validationCustom02" class="form-label">Last name</label>
                             <input type="text" class="form-control" id="validationCustom02">
                             <div class="valid-feedback">Looks good!</div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-12 prev-clicked">
                             <label for="validationCustomUsername" class="form-label">Email</label>
                             <div class="input-group has-validation">
                                 <span class="input-group-text" id="inputGroupPrepend">@</span>
@@ -37,22 +37,22 @@
                                 <div class="invalid-feedback">Please choose a username.</div>
                             </div>
                         </div>
-                        <div class="col-md-3 d-none">
+                        <div class="col-md-3 d-none next-clicked">
                             <label for="validationCustom03" class="form-label">Password</label>
                             <input type="password" class="form-control" id="validationCustom03">
                             <div class="invalid-feedback">Please provide a valid city.</div>
                         </div>
-                        <div class="col-md-3 d-none">
+                        <div class="col-md-3 d-none next-clicked">
                             <label for="validationCustom06" class="form-label">Valid Password</label>
                             <input type="password" class="form-control" id="validationCustom06">
                             <div class="invalid-feedback">Please provide a valid city.</div>
                         </div>
-                        <div class="col-md-3 d-none">
+                        <div class="col-md-3 d-none next-clicked">
                             <label for="validationCustom04" class="form-label">Date Of Birth</label>
                             <input type="text" class="form-control" id="validationCustom04">
                             <div class="invalid-feedback">Please provide a valid city.</div>
                         </div>
-                        <div class="col-md-3 d-none">
+                        <div class="col-md-3 d-none next-clicked">
                             <label for="validationCustom05" class="form-label">Gender</label>
                             <select class="form-select" aria-label="Default select example" id="validationCustom05">
                                 <option selected>Open this select menu</option>
@@ -61,15 +61,15 @@
                                 <option value="3">Three</option>
                             </select>
                         </div>
-                        <div class="col-6 d-none">
+                        <div class="col-6 d-none next-clicked">
                             <div class="input-group">
                                 <span class="input-group-text">Comments</span>
                                 <textarea class="form-control" aria-label="Comments"></textarea>
                             </div>
                         </div>
                         <div class="col-12">
-                            <button class="btn btn-primary sub-next" type="button">Back</button>
-                            <button class="btn btn-primary" type="button">Next</button>
+                            <button class="btn btn-primary go-prev" type="button">Back</button>
+                            <button class="btn btn-primary sub-next" type="button">Next</button>
                         </div>
                     </form>
                 </div>
@@ -87,14 +87,36 @@
             document.addEventListener('DOMContentLoaded', function (){
                 // Example starter JavaScript for disabling form submissions if there are invalid fields
                 (() => {
-                    const forms = document.querySelectorAll('.needs-validation')
+                    const forms = document.querySelectorAll('.needs-validation');
+                    const elem_next_none = document.querySelectorAll('.next-clicked');
+                    const elem_prev_none = document.querySelectorAll('.prev-clicked');
 
-                    document.querySelector("div .sub-next").addEventListener("click", function(event){
+                    document.querySelector(".sub-next").addEventListener("click", function(event){
+                        elem_next_none.forEach(div => {
+                            div.classList.remove('d-none');
+                        });
 
+                        elem_prev_none.forEach(div => {
+                            div.classList.add('d-none');
+                        });
+
+                        document.querySelector('div .sub-next').innerHTML = "Submit";
                     })
+
+                    document.querySelector(".go-prev").addEventListener("click", function(event){
+                        elem_prev_none.forEach(div => {
+                            div.classList.remove('d-none');
+                        });
+
+                        elem_next_none.forEach(div => {
+                            div.classList.add('d-none');
+                        });
+
+                        document.querySelector('div .sub-next').innerHTML = "Next";
+                    })
+
                 })()
             })
-
         </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
