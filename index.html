@@ -88,296 +88,290 @@
 
     <!-- SignUp -->
     <div class="row">
-        <div class="col-12 text-center">
-            <br>
-            <img src="media/signUp.jpg" alt="..." class="img-fluid rounded">
+        <div class="col-12 text-center no-exist-u">
+            <p>no user exist</p>
+        </div>
+        <div class="col-12 text-center d-none exist-u">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First name</th>
+                    <th scope="col">Last name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Password</th>
+                    <th scope="col">Date Of Birth</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">comments</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
 <script>
     const PAGE_1 = 0;
-    const emails = JSON.parse(localStorage.getItem("storedEmails")) || {};
-    const save_email = () =>{
-        emails[document.getElementById("Email").value.trim()] = {
-            first_name: document.getElementById("First-Name").value.trim(),
-            last_name: document.getElementById("Last-Name").value.trim(),
-            password: document.getElementById("Password").value.trim(),
-            date: document.getElementById("Date-Of-Birth").value.trim(),
-            gender: document.getElementById("Gender").value.trim(),
-            text: document.querySelector("textarea").value.trim(),
-        };
-        localStorage.setItem("storedEmails",JSON.stringify(emails));
+    let emails = {};
+    let page_num = 0;
+
+    const funcs = {
+        alert_message(bad_lable, good_lable, message, is_bad)
+        {
+            let name_alert = document.querySelector(bad_lable);
+            name_alert.innerHTML = message;
+
+            if (is_bad)
+            {
+                name_alert.classList.remove("d-none")
+                if(good_lable !== "") {
+                    name_alert = document.querySelector(good_lable);
+                    name_alert.classList.add("d-none")
+                }
+            }
+            else
+            {
+                name_alert.classList.add("d-none")
+                if(good_lable !== "") {
+                    name_alert = document.querySelector(good_lable);
+                    name_alert.classList.remove("d-none")
+                }
+            }
+        },
+
+        prev_click(elem_prev_none, elem_next_none) {
+            elem_prev_none.forEach(div => {
+                div.classList.remove('d-none');
+            });
+
+            elem_next_none.forEach(div => {
+                div.classList.add('d-none');
+            });
+
+            --page_num;
+            document.querySelector('div .sub-next').innerHTML = "Next";
+        },
+
+        next_click(elem_prev_none, elem_next_none, sub_next) {
+            elem_next_none.forEach(div => {
+                div.classList.remove('d-none');
+            });
+
+            elem_prev_none.forEach(div => {
+                div.classList.add('d-none');
+            });
+
+            sub_next.innerHTML = "Submit";
+            ++page_num;
+        },
+
+        reset_alerts()
+        {
+            const alerts_bunners = document.querySelectorAll('div .alert');
+
+            alerts_bunners.forEach(alert =>{
+                alert.classList.add('d-none');
+            })
+        }
     }
+
     document.addEventListener('DOMContentLoaded', function(){
-        // Example starter JavaScript for disabling form submissions if there are invalid fields
-        (() => {
-            let page_num = 0;
-            const az_pattern = /[a-z]+/;
-            const email_pattern = /\S+@\S+ac\.il/;
-            const password_pattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
 
-            const elem_next_none = document.querySelectorAll('.next-clicked');
-            const elem_prev_none = document.querySelectorAll('.prev-clicked');
+        const az_pattern = /^[a-z]\s*$/;
+        const email_pattern = /\S+@\S+ac\.il/;
+        const password_pattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
 
-            const sub_next = document.querySelector(".sub-next");
+        const elem_next_none = document.querySelectorAll('div .next-clicked');
+        const elem_prev_none = document.querySelectorAll('div .prev-clicked');
 
-            sub_next.addEventListener("click", function(event){
-                const email_ev = document.getElementById("Email").value.trim();
-                const first_name_ev = document.getElementById("First-Name").value.trim();
-                const last_name_ev = document.getElementById("Last-Name").value.trim();
-
-                let is_valid = true;
-
-                if (page_num === PAGE_1) {
-                    // first name validation
-                    if(!first_name_ev) {
-                        const first_name_alert = document.querySelector(".bad-val-fu");
-                        first_name_alert.innerHTML = "The first name must not be empty";
-                        first_name_alert.classList.remove("d-none")
-
-                        is_valid = false;
-                    }
-                    else if(!az_pattern.test(first_name_ev)) {
-                        const first_name_alert = document.querySelector(".bad-val-fu");
-                        first_name_alert.innerHTML = "The first name should only contain alphabets (a-z)";
-                        first_name_alert.classList.remove("d-none")
-
-                        is_valid = false;
-                    }
-                    else {
-                        let first_name_alert = document.querySelector(".bad-val-fu");
-                        first_name_alert.innerHTML = "";
-                        first_name_alert.classList.add("d-none")
-
-                        first_name_alert = document.querySelector(".good-val-fu");
-                        first_name_alert.classList.remove("d-none")
-                    }
-
-                    // last name validation
-                    if(!last_name_ev) {
-                        const last_name_alert = document.querySelector(".bad-val-lu");
-                        last_name_alert.innerHTML = "The last name must not be empty";
-                        last_name_alert.classList.remove("d-none")
-
-                        is_valid = false;
-                    }
-                    else if(!az_pattern.test(last_name_ev))
-                    {
-                        const last_name_alert = document.querySelector(".bad-val-lu");
-                        last_name_alert.innerHTML = "The last name should only contain alphabets (a-z)";
-                        last_name_alert.classList.remove("d-none")
-
-                        is_valid = false;
-                    }
-                    else
-                    {
-                        let last_name_alert = document.querySelector(".bad-val-lu");
-                        last_name_alert.innerHTML = "";
-                        last_name_alert.classList.add("d-none")
-
-                        last_name_alert = document.querySelector(".good-val-lu");
-                        last_name_alert.classList.remove("d-none")
-                    }
-
-                    //email validation
-                    if(!email_ev) {
-                        const email_alert = document.querySelector(".bad-val-eu");
-                        email_alert.innerHTML = "The Email must not be empty";
-                        email_alert.classList.remove("d-none")
-
-                        is_valid = false;
-                    }
-                    else if(email_ev in emails) {
-                        const email_alert = document.querySelector(".bad-val-eu");
-                        email_alert.innerHTML = "The Email should be unique, one cannot record more than one user with same email.";
-                        email_alert.classList.remove("d-none")
-
-                        is_valid = false;
-                    }
-                    else if(!email_pattern.test(email_ev))
-                    {
-                        const email_alert = document.querySelector(".bad-val-eu");
-                        email_alert.innerHTML = "The Email should contain a valid email address from an Israeli academic institution (*.ac.il)";
-                        email_alert.classList.remove("d-none")
-
-                        is_valid = false;
-                    }
-                    else{
-                        let email_alert = document.querySelector(".bad-val-eu");
-                        email_alert.innerHTML = "";
-                        email_alert.classList.add("d-none")
-
-                        email_alert = document.querySelector(".good-val-eu");
-                        email_alert.classList.remove("d-none")
-                    }
+        const sub_next = document.querySelector("div .sub-next");
 
 
-                    if(is_valid)
-                    {
-                        elem_next_none.forEach(div => {
-                            div.classList.remove('d-none');
-                        });
 
-                        elem_prev_none.forEach(div => {
-                            div.classList.add('d-none');
-                        });
+        sub_next.addEventListener("click", function(){
+            let first_name_ev = document.getElementById("First-Name");
+            let last_name_ev = document.getElementById("Last-Name");
+            let email_ev = document.getElementById("Email");
 
-                        sub_next.innerHTML = "Submit";
-                        ++page_num;
-                    }
+            let is_valid = true;
+            console.log(emails.length)
+            if (page_num === PAGE_1)
+            {
+                // first name validation
+                if(!first_name_ev.value.trim()) {
+                    funcs.alert_message(".bad-val-fu", ".good-val-fu", "The first name must not be empty", true);
+                    is_valid = false;
+                } else if(!az_pattern.test(first_name_ev.value.trim())) {
+                    funcs.alert_message(".bad-val-fu", ".good-val-fu", "The first name should only contain alphabets (a-z)", true);
+                    is_valid = false;
                 }
-                else
-                {
-                    const password_ev = document.getElementById("Password").value.trim();
-                    const confirm_password_ev = document.getElementById("Valid-Password").value.trim();
-                    const date_ev = document.getElementById("Date-Of-Birth").value.trim();
-                    const gender_ev = document.getElementById("Gender").value.trim();
-                    const text_ev = document.querySelector("textarea").value.trim();
+                else {
+                    funcs.alert_message(".bad-val-fu", ".good-val-fu", "", false);
+                }
 
-                    // password validation
-                    if(!password_ev) {
-                        const password_alert = document.querySelector(".bad-val-pu");
-                        password_alert.innerHTML = "The password must not be empty";
-                        password_alert.classList.remove("d-none")
+                // last name validation
+                if(!last_name_ev.value.trim()) {
+                    funcs.alert_message(".bad-val-lu", ".good-val-lu", "The last name must not be empty", true);
+                    is_valid = false;
+                } else if(!az_pattern.test(last_name_ev.value.trim())) {
+                    funcs.alert_message(".bad-val-lu", ".good-val-lu", "The last name should only contain alphabets (a-z)", true);
+                    is_valid = false;
+                } else {
+                    funcs.alert_message(".bad-val-lu", ".good-val-lu", "", false);
+                }
 
-                        is_valid = false;
-                    } else if(!password_pattern.test(password_ev)) {
-                        const password_alert = document.querySelector(".bad-val-pu");
-                        password_alert.innerHTML = "The password should only contain at least one uppercase letter(A-Z), one lowercase letter (a-z) and one digit.";
-                        password_alert.classList.remove("d-none")
+                //email validation
+                if(!email_ev.value.trim()) {
+                    funcs.alert_message(".bad-val-eu", ".good-val-eu", "The Email must not be empty", true);
+                    is_valid = false;
+                } else if(email_ev.value.trim() in emails) {
+                    funcs.alert_message(".bad-val-eu", ".good-val-eu", "The Email should be unique, one cannot record more than one user with same email.", true);
+                    is_valid = false;
+                } else if(!email_pattern.test(email_ev.value.trim())) {
+                    funcs.alert_message(".bad-val-eu", ".good-val-eu", "The Email should contain a valid email address from an Israeli academic institution (*.ac.il)", true);
+                    is_valid = false;
+                } else {
+                    funcs.alert_message(".bad-val-eu", ".good-val-eu", "", false);
+                }
 
-                        if(password_ev.length<8)
-                            password_alert.innerHTML += " <b>minimum eight characters<b>";
+                if(is_valid)
+                    funcs.next_click(elem_prev_none, elem_next_none, sub_next);
+            }
+            else
+            {
+                const password_ev = document.getElementById("Password");
+                const confirm_password_ev = document.getElementById("Valid-Password");
+                const date_ev = document.getElementById("Date-Of-Birth");
+                const gender_ev = document.getElementById("Gender");
+                const text_ev = document.querySelector("textarea");
 
-                        is_valid = false;
-                    } else if(password_ev.length<8) {
-                        const password_alert = document.querySelector(".bad-val-pu");
-                        password_alert.innerHTML = "<b>minimum eight characters<b>";
-                        password_alert.classList.remove("d-none")
-                        is_valid = false;
-                    } else {
-                        let password_alert = document.querySelector(".bad-val-pu");
-                        password_alert.innerHTML = "";
-                        password_alert.classList.add("d-none")
+                // password validation
+                if(!password_ev.value.trim()) {
+                    funcs.alert_message(".bad-val-pu", ".good-val-pu", "The password must not be empty", true);
+                    is_valid = false;
+                } else if(!password_pattern.test(password_ev.value.trim())) {
+                    let add_length = ""
+                    if(password_ev.value.trim().length<8)
+                        add_length = " <b>minimum eight characters<b>";
 
-                        password_alert = document.querySelector(".good-val-pu");
-                        password_alert.classList.remove("d-none")
-                    }
+                    funcs.alert_message(".bad-val-pu", ".good-val-pu", "The password should only contain at least one uppercase letter(A-Z), one lowercase letter (a-z) and one digit."+add_length, true);
+                    is_valid = false;
+                } else if(password_ev.value.trim().length<8) {
+                    funcs.alert_message(".bad-val-pu", ".good-val-pu", "<b>minimum eight characters<b>", true);
+                    is_valid = false;
+                } else {
+                    funcs.alert_message(".bad-val-pu", ".good-val-pu", "", false);
+                }
 
+                // valid password validation
+                if(!confirm_password_ev.value.trim()) {
+                    funcs.alert_message(".bad-val-vpu", ".good-val-vpu", "The Valid password must not be empty", true);
+                    is_valid = false;
+                } else if(confirm_password_ev.value.trim() !== password_ev.value.trim()) {
+                    funcs.alert_message(".bad-val-vpu", ".good-val-vpu", "The Valid password must match the first password field", true);
+                    is_valid = false;
+                } else {
+                    funcs.alert_message(".bad-val-vpu", ".good-val-vpu", "", false);
+                }
 
-                    // valid password validation
-                    if(!confirm_password_ev) {
-                        const valid_password_alert = document.querySelector(".bad-val-vpu");
-                        valid_password_alert.innerHTML = "The Valid password must not be empty";
-                        valid_password_alert.classList.remove("d-none")
-
-                        is_valid = false;
-                    } else if(!confirm_password_ev === password_ev) {
-                        const valid_password_alert = document.querySelector(".bad-val-vpu");
-                        valid_password_alert.innerHTML = "The Valid password must match the first password field";
-
-                        is_valid = false;
-                    } else {
-                        let valid_password_alert = document.querySelector(".bad-val-vpu");
-                        valid_password_alert.innerHTML = "";
-                        valid_password_alert.classList.add("d-none")
-
-                        valid_password_alert = document.querySelector(".good-val-vpu");
-                        valid_password_alert.classList.remove("d-none")
-                    }
-
-                    // date validation
-                    console.log(date_ev)
-                    if(!date_ev) {
-                        const date_alert = document.querySelector(".bad-val-du");
-                        date_alert.innerHTML = "The date must not be empty";
-                        date_alert.classList.remove("d-none")
-
-                        is_valid = false;
-                    } else
+                // date validation
+                console.log(date_ev.value.trim())
+                if(!date_ev.value.trim()) {
+                    funcs.alert_message(".bad-val-du", ".good-val-du", "The date must not be empty", true);
+                    is_valid = false;
+                } else {
+                    const dateObject = new Date(date_ev.value.trim()); // make date value
+                    if (!isNaN(dateObject.getTime())/*check if the date input is valid*/)
                     {
-                        const dateObject = new Date(date_ev); // make date value
-                        if (!isNaN(dateObject.getTime())/*check if the date input is valid*/)
+                        const currentDate = new Date();
+                        const userBirthDate = new Date(dateObject.getFullYear() + 18, dateObject.getMonth(), dateObject.getDate());
+
+                        if (userBirthDate > currentDate)
                         {
-                            const currentDate = new Date();
-                            const userBirthDate = new Date(dateObject.getFullYear() + 18, dateObject.getMonth(), dateObject.getDate());
-
-                            if (userBirthDate > currentDate)
-                            {
-                                const date_alert = document.querySelector(".bad-val-du");
-                                date_alert.innerHTML = "The user date must be at least 18 years old";
-                                date_alert.classList.remove("d-none")
-
-                                is_valid = false
-                            }
-                            else {
-                                let date_alert = document.querySelector(".bad-val-du");
-                                date_alert.innerHTML = "";
-                                date_alert.classList.add("d-none")
-
-                                date_alert = document.querySelector(".good-val-du");
-                                date_alert.classList.remove("d-none")
-                            }
-                        }else
-                        {
-                            const date_alert = document.querySelector(".bad-val-du");
-                            date_alert.innerHTML = "the date input is not valid";
-                            date_alert.classList.remove("d-none")
-
+                            funcs.alert_message(".bad-val-du", ".good-val-du", "The user date must be at least 18 years old", true);
                             is_valid = false
+                        } else {
+                            funcs.alert_message(".bad-val-du", ".good-val-du", "", false);
                         }
-                    }
-
-                    // gender validation
-                    if(gender_ev === 'Select your gender') {
-                        const gender_alert = document.querySelector(".bad-val-gu");
-                        gender_alert.innerHTML = "You must to choose your Gender!";
-                        gender_alert.classList.remove("d-none")
-
-                        is_valid = false;
                     } else {
-                        let gender_alert = document.querySelector(".bad-val-gu");
-                        gender_alert.innerHTML = "";
-                        gender_alert.classList.add("d-none")
-
-                        gender_alert = document.querySelector(".good-val-gu");
-                        gender_alert.classList.remove("d-none")
-                    }
-
-
-                    if(text_ev.length > 100){
-                        const comment_alert = document.querySelector(".bad-val-cu");
-                        comment_alert.innerHTML = "maximum of 100 characters";
-                        comment_alert.classList.remove("d-none")
-
-                        is_valid = false;
-                    } else{
-                        const comment_alert = document.querySelector(".bad-val-cu");
-                        comment_alert.innerHTML = "";
-                        comment_alert.classList.add("d-none")
-                    }
-
-                    if(is_valid){
-                        sub_next.type = "submit"
+                        funcs.alert_message(".bad-val-du", ".good-val-du", "the date input is not valid", true);
+                        is_valid = false
                     }
                 }
-            })
 
-            document.querySelector(".go-prev").addEventListener("click", function(event){
-                elem_prev_none.forEach(div => {
-                    div.classList.remove('d-none');
-                });
+                // gender validation
+                if(gender_ev.selectedIndex === 0) {
+                    funcs.alert_message(".bad-val-gu", ".good-val-gu", "You must to choose your Gender!", true);
+                    is_valid = false;
+                } else {
+                    funcs.alert_message(".bad-val-gu", ".good-val-gu", "", false);
+                }
 
-                elem_next_none.forEach(div => {
-                    div.classList.add('d-none');
-                });
+                if(text_ev.value.trim().length > 100) {
+                    funcs.alert_message(".bad-val-cu", "", "maximum of 100 characters", true);
+                    is_valid = false;
+                } else {
+                    funcs.alert_message(".bad-val-cu", "", "", false);
+                }
 
-                --page_num;
-                document.querySelector('div .sub-next').innerHTML = "Next";
-            })
+                if(is_valid)
+                {
+                    document.querySelector(".no-exist-u").classList.add("d-none");
+                    document.querySelector(".exist-u").classList.remove("d-none");
 
-        })()
+                    emails[email_ev.value.trim()] = {
+                        first_name: first_name_ev.value.trim(),
+                        last_name: last_name_ev.value.trim(),
+                        password: password_ev.value.trim(),
+                        date: date_ev.value.trim(),
+                        gender: gender_ev.value.trim(),
+                        text: text_ev.value.trim(),
+                    };
+
+                    email_ev.value = "";
+                    first_name_ev.value = "";
+                    last_name_ev.value = "";
+                    password_ev.value = "";
+                    confirm_password_ev.value = "";
+                    date_ev.value = "";
+                    gender_ev.selectedIndex = 0;
+                    text_ev.value = "";
+
+                    funcs.prev_click(elem_prev_none, elem_next_none);
+                    funcs.reset_alerts();
+
+                    // sort the emails object
+                    const sortedKeys = Object.keys(emails).sort();
+                    const sortedObject = {};
+                    sortedKeys.forEach(key => {
+                        sortedObject[key] = emails[key];
+                    });
+                    emails = sortedObject;
+                    let new_scope = "";
+                    let list = 0;
+                    for (const user in emails){
+                        new_scope += "<tr>\n" +
+                            "                    <th scope=\"row\">"+(++list).toString()+"</th>\n" +
+                            "                    <td>"+emails[user].first_name+"</td>\n" +
+                            "                    <td>"+emails[user].last_name+"</td>\n" +
+                            "                    <td>"+user+"</td>\n" +
+                            "                    <td>"+emails[user].password+"</td>\n" +
+                            "                    <td>"+emails[user].date+"</td>\n" +
+                            "                    <td>"+emails[user].gender+"</td>\n" +
+                            "                    <td>"+emails[user].text+"</td>\n" +
+                            "                </tr>";
+                    }
+                    document.querySelector("tbody").innerHTML = new_scope
+                }
+            }
+        })
+
+        document.querySelector(".go-prev").addEventListener("click", function(event){
+            funcs.prev_click(elem_prev_none, elem_next_none);
+        })
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
