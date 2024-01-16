@@ -96,11 +96,16 @@
 
 <script>
     const PAGE_1 = 0;
-
-    const emails = JSON.parse(localStorage.getItem("storedEmails")) || [];
+    const emails = JSON.parse(localStorage.getItem("storedEmails")) || {};
     const save_email = () =>{
-        emails.push(document.getElementById("Email").value.trim());
-
+        emails[document.getElementById("Email").value.trim()] = {
+            first_name: document.getElementById("First-Name").value.trim(),
+            last_name: document.getElementById("Last-Name").value.trim(),
+            password: document.getElementById("Password").value.trim(),
+            date: document.getElementById("Date-Of-Birth").value.trim(),
+            gender: document.getElementById("Gender").value.trim(),
+            text: document.querySelector("textarea").value.trim(),
+        };
         localStorage.setItem("storedEmails",JSON.stringify(emails));
     }
     document.addEventListener('DOMContentLoaded', function(){
@@ -111,20 +116,19 @@
             const email_pattern = /\S+@\S+ac\.il/;
             const password_pattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
 
-            const forms = document.querySelectorAll('.needs-validation');
             const elem_next_none = document.querySelectorAll('.next-clicked');
             const elem_prev_none = document.querySelectorAll('.prev-clicked');
 
             const sub_next = document.querySelector(".sub-next");
 
             sub_next.addEventListener("click", function(event){
+                console.log(emails)
                 const email_ev = document.getElementById("Email").value.trim();
+                const first_name_ev = document.getElementById("First-Name").value.trim();
+                const last_name_ev = document.getElementById("Last-Name").value.trim();
                 let is_valid = true;
 
                 if (page_num === PAGE_1) {
-                    const first_name_ev = document.getElementById("First-Name").value = '';
-                    const last_name_ev = document.getElementById("Last-Name").value.trim();
-
                     // first name validation
                     if(!first_name_ev) {
                         const first_name_alert = document.querySelector(".bad-val-fu");
@@ -183,7 +187,7 @@
 
                         is_valid = false;
                     }
-                    else if(emails.includes(email_ev)) {
+                    else if(email_ev in emails) {
                         const email_alert = document.querySelector(".bad-val-eu");
                         email_alert.innerHTML = "The Email should be unique, one cannot record more than one user with same email.";
                         email_alert.classList.remove("d-none")
@@ -228,7 +232,7 @@
                     const confirm_password_ev = document.getElementById("Valid-Password").value.trim();
                     const date_ev = document.getElementById("Date-Of-Birth").value.trim();
                     const gender_ev = document.getElementById("Gender").value.trim();
-                    const text_ev = document.querySelector("textarea").textLength;
+                    const text_ev = document.querySelector("textarea").value.trim();
 
                     // password validation
                     if(!password_ev) {
@@ -341,7 +345,7 @@
                     }
 
 
-                    if(text_ev > 100){
+                    if(text_ev.length > 100){
                         const comment_alert = document.querySelector(".bad-val-cu");
                         comment_alert.innerHTML = "maximum of 100 characters";
                         comment_alert.classList.remove("d-none")
@@ -354,7 +358,15 @@
                     }
 
                     if(is_valid){
-                        emails.push(email_ev);
+                        // emails.email_ev = {
+                        //     first_name: first_name_ev,
+                        //     last_name: last_name_ev,
+                        //     password: password_ev,
+                        //     date: date_ev,
+                        //     gender: gender_ev,
+                        //     text: text_ev,
+                        // };
+
                         sub_next.type = "submit"
                     }
                 }
