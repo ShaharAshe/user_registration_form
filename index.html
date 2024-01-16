@@ -117,6 +117,7 @@
     const PAGE_1 = 0;
     let emails = {};
     let page_num = 0;
+    const genders = ["Male", "Female", "Other"];
 
     const funcs = {
         alert_message(bad_lable, good_lable, message, is_bad)
@@ -180,7 +181,7 @@
 
     document.addEventListener('DOMContentLoaded', function(){
 
-        const az_pattern = /^[a-z]\s*$/;
+        const az_pattern = /^[a-z]+\s*$/;
         const email_pattern = /\S+@\S+ac\.il/;
         const password_pattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
 
@@ -321,13 +322,13 @@
                 {
                     document.querySelector(".no-exist-u").classList.add("d-none");
                     document.querySelector(".exist-u").classList.remove("d-none");
-
+                    const gender_str =
                     emails[email_ev.value.trim()] = {
                         first_name: first_name_ev.value.trim(),
                         last_name: last_name_ev.value.trim(),
                         password: password_ev.value.trim(),
                         date: date_ev.value.trim(),
-                        gender: gender_ev.value.trim(),
+                        gender: genders[gender_ev.value.trim()-1],
                         text: text_ev.value.trim(),
                     };
 
@@ -350,6 +351,8 @@
                         sortedObject[key] = emails[key];
                     });
                     emails = sortedObject;
+                    //===============================
+
                     let new_scope = "";
                     let list = 0;
                     for (const user in emails){
