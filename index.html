@@ -322,7 +322,6 @@
                 {
                     document.querySelector(".no-exist-u").classList.add("d-none");
                     document.querySelector(".exist-u").classList.remove("d-none");
-                    const gender_str =
                     emails[email_ev.value.trim()] = {
                         first_name: first_name_ev.value.trim(),
                         last_name: last_name_ev.value.trim(),
@@ -372,7 +371,7 @@
             }
         })
 
-        document.querySelector(".go-prev").addEventListener("click", function(event){
+        document.querySelector(".go-prev").addEventListener("click", function(){
             funcs.prev_click(elem_prev_none, elem_next_none);
         })
     });
