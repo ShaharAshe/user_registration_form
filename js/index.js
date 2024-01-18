@@ -99,7 +99,7 @@ const main = {
                 if(!first_name_ev.value.trim()) {
                     funcs.alert_message(".bad-val-fu", ".good-val-fu", "The first name must not be empty", true);
                     is_valid = false;
-                } else if(!utilities.az_pattern.test(first_name_ev.value.trim())) {
+                } else if(!az_pattern.test(first_name_ev.value.trim())) {
                     funcs.alert_message(".bad-val-fu", ".good-val-fu", "The first name should only contain alphabets (a-z)", true);
                     is_valid = false;
                 }
@@ -111,7 +111,7 @@ const main = {
                 if(!last_name_ev.value.trim()) {
                     funcs.alert_message(".bad-val-lu", ".good-val-lu", "The last name must not be empty", true);
                     is_valid = false;
-                } else if(!utilities.az_pattern.test(last_name_ev.value.trim())) {
+                } else if(!az_pattern.test(last_name_ev.value.trim())) {
                     funcs.alert_message(".bad-val-lu", ".good-val-lu", "The last name should only contain alphabets (a-z)", true);
                     is_valid = false;
                 } else {
@@ -125,7 +125,7 @@ const main = {
                 } else if(email_ev.value.trim() in emails) {
                     funcs.alert_message(".bad-val-eu", ".good-val-eu", "The Email should be unique, one cannot record more than one user with same email.", true);
                     is_valid = false;
-                } else if(!utilities.email_pattern.test(email_ev.value.trim())) {
+                } else if(!email_pattern.test(email_ev.value.trim())) {
                     funcs.alert_message(".bad-val-eu", ".good-val-eu", "The Email should contain a valid email address from an Israeli academic institution (*.ac.il)", true);
                     is_valid = false;
                 } else {
@@ -146,7 +146,7 @@ const main = {
 
                     document.querySelector(".good-val-vpu").classList.add('d-none');
                     document.querySelector(".bad-val-vpu").classList.add('d-none');
-                } else if(!utilities.password_pattern.test(password_ev.value.trim())) {
+                } else if(!password_pattern.test(password_ev.value.trim())) {
                     let add_length = ""
                     if(password_ev.value.trim().length<8)
                         add_length = " <b>minimum eight characters<b>";
