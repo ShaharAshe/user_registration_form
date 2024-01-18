@@ -152,8 +152,8 @@
                 div.classList.add('d-none');
             });
 
-            sub_next.classList.remove("btn-success")
-            sub_next.classList.add("btn-primary")
+            sub_next.classList.remove("btn-success");
+            sub_next.classList.add("btn-primary");
 
             --page_num;
             sub_next.innerHTML = "Next";
@@ -195,15 +195,22 @@
 
         const sub_next = document.querySelector("div .sub-next");
 
+        const first_name_ev = document.getElementById("First-Name");
+        const last_name_ev = document.getElementById("Last-Name");
+        const email_ev = document.getElementById("Email");
+
+        const password_ev = document.getElementById("Password");
+        const confirm_password_ev = document.getElementById("Valid-Password");
+        const date_ev = document.getElementById("Date-Of-Birth");
+        const gender_ev = document.getElementById("Gender");
+        const text_ev = document.querySelector("textarea");
+
 
 
         sub_next.addEventListener("click", function(){
-            let first_name_ev = document.getElementById("First-Name");
-            let last_name_ev = document.getElementById("Last-Name");
-            let email_ev = document.getElementById("Email");
+
 
             let is_valid = true;
-            console.log(emails.length)
             if (page_num === PAGE_1)
             {
                 // first name validation
@@ -248,11 +255,7 @@
             }
             else
             {
-                const password_ev = document.getElementById("Password");
-                const confirm_password_ev = document.getElementById("Valid-Password");
-                const date_ev = document.getElementById("Date-Of-Birth");
-                const gender_ev = document.getElementById("Gender");
-                const text_ev = document.querySelector("textarea");
+
 
                 // password validation
                 if(!password_ev.value.trim()) {
@@ -293,7 +296,6 @@
                 }
 
                 // date validation
-                console.log(date_ev.value.trim())
                 if(!date_ev.value.trim()) {
                     funcs.alert_message(".bad-val-du", ".good-val-du", "The date must not be empty", true);
                     is_valid = false;
@@ -303,7 +305,6 @@
                     {
                         const currentDate = new Date();
                         const userBirthDate = new Date(dateObject.getFullYear() + 18, dateObject.getMonth(), dateObject.getDate());
-
                         if (userBirthDate > currentDate)
                         {
                             funcs.alert_message(".bad-val-du", ".good-val-du", "The user date must be at least 18 years old", true);
@@ -354,7 +355,7 @@
                     gender_ev.selectedIndex = 0;
                     text_ev.value = "";
 
-                    funcs.prev_click(elem_prev_none, elem_next_none);
+                    funcs.prev_click(elem_prev_none, elem_next_none, sub_next);
                     funcs.reset_alerts();
 
                     // sort the emails object
