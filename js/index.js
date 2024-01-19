@@ -63,15 +63,67 @@ const funcs = {
         })
     },
 
-    validate_check(ev, pattern, bad, good, empty_msg, pattern_msg){
+    is_empty(ev, bad, good, empty_field){
         if(!ev.value.trim()) {
-            funcs.alert_message(bad, good, empty_msg, true);
+            funcs.alert_message(bad, good, "The "+empty_field+" must not be empty", true);
             return true;
         }
+        return false;
+    },
+
+    validate_check(ev, pattern, bad, good, empty_field, pattern_msg){
+        if(this.is_empty(ev, bad, good, empty_field))
+            return true;
         if(!pattern.test(ev.value.trim())) {
             funcs.alert_message(bad, good, pattern_msg, true);
             return true;
         }
+        return false;
+    },
+
+    sort_emails(emails){
+        // sort the emails object
+        const sortedKeys = Object.keys(emails).sort();
+        const sortedObject = {};
+        sortedKeys.forEach(key => {
+            sortedObject[key] = emails[key];
+        });
+        return sortedObject;
+    },
+
+    add_scope(emails){
+        let new_scope = "";
+        let list = 0;
+
+        for (const user in emails){
+            new_scope += "<tr>\n" +
+                "                    <th scope=\"row\">"+(++list).toString()+"</th>\n" +
+                "                    <td>"+emails[user].first_name+"</td>\n" +
+                "                    <td>"+emails[user].last_name+"</td>\n" +
+                "                    <td>"+user+"</td>\n" +
+                "                    <td>"+emails[user].password+"</td>\n" +
+                "                    <td>"+emails[user].date+"</td>\n" +
+                "                    <td>"+emails[user].gender+"</td>\n" +
+                "                    <td>"+emails[user].text+"</td>\n" +
+                "                </tr>";
+        }
+        document.querySelector("tbody").innerHTML = new_scope
+    },
+    check_date(date_ev){
+        const dateObject = new Date(date_ev.value.trim()); // make date value
+        if (!isNaN(dateObject.getTime())/*check if the date input is valid*/) {
+            const currentDate = new Date();
+            const userBirthDate = new Date(dateObject.getFullYear() + 18, dateObject.getMonth(), dateObject.getDate());
+            if (userBirthDate > currentDate)
+            {
+                funcs.alert_message(".bad-val-du", ".good-val-du", "The user date must be at least 18 years old", true);
+                return false;
+            }
+            // good date
+            funcs.alert_message(".bad-val-du", ".good-val-du", "", false);
+            return true;
+        }
+        funcs.alert_message(".bad-val-du", ".good-val-du", "the date input is not valid", true);
         return false;
     }
 }
@@ -106,26 +158,24 @@ const main = {
             if (page_num === PAGE_1)
             {
                 // first name validation
-                if (funcs.validate_check(first_name_ev, az_pattern, ".bad-val-fu", ".good-val-fu", "The first name must not be empty", "The first name should only contain alphabets (a-z)"))
+                if (funcs.validate_check(first_name_ev, az_pattern, ".bad-val-fu", ".good-val-fu", "first name", "The first name should only contain alphabets (a-z)"))
                     is_valid = false;
                 else
                     funcs.alert_message(".bad-val-fu", ".good-val-fu", "", false);
 
                 // last name validation
-                if (funcs.validate_check(last_name_ev, az_pattern, ".bad-val-lu", ".good-val-lu", "The last name must not be empty", "The last name should only contain alphabets (a-z)"))
+                if (funcs.validate_check(last_name_ev, az_pattern, ".bad-val-lu", ".good-val-lu", "last name", "The last name should only contain alphabets (a-z)"))
                     is_valid = false;
                 else
                     funcs.alert_message(".bad-val-lu", ".good-val-lu", "", false);
 
-
                 //email validation
-                if (funcs.validate_check(email_ev, email_pattern, ".bad-val-eu", ".good-val-eu", "The Email must not be empty", "The Email should contain a valid email address from an Israeli academic institution (*.ac.il)"))
+                if (funcs.validate_check(email_ev, email_pattern, ".bad-val-eu", ".good-val-eu", "Email", "The Email should contain a valid email address from an Israeli academic institution (*.ac.il)"))
                     is_valid = false;
                 else if(email_ev.value.trim() in emails) {
                     funcs.alert_message(".bad-val-eu", ".good-val-eu", "The Email should be unique, one cannot record more than one user with same email.", true);
                     is_valid = false;
-                }
-                else
+                } else
                     funcs.alert_message(".bad-val-eu", ".good-val-eu", "", false);
 
 
@@ -134,27 +184,20 @@ const main = {
             }
             else
             {
-
-
                 // password validation
-                if(!password_ev.value.trim()) {
-                    funcs.alert_message(".bad-val-pu", ".good-val-pu", "The password must not be empty", true);
+                let add_length = ""
+                if(password_ev.value.trim() && password_ev.value.trim().length<8)
+                    add_length = " <b>minimum eight characters<b>";
+
+                if (funcs.validate_check(password_ev, password_pattern, ".bad-val-pu", ".good-val-pu", "password", "The password should only contain at least one uppercase letter(A-Z), one lowercase letter (a-z) and one digit."+add_length))
+                {
                     is_valid = false;
 
+                    // remove the valid password alert
                     document.querySelector(".good-val-vpu").classList.add('d-none');
                     document.querySelector(".bad-val-vpu").classList.add('d-none');
-                } else if(!password_pattern.test(password_ev.value.trim())) {
-                    let add_length = ""
-                    if(password_ev.value.trim().length<8)
-                        add_length = " <b>minimum eight characters<b>";
-
-                    funcs.alert_message(".bad-val-pu", ".good-val-pu", "The password should only contain at least one uppercase letter(A-Z), one lowercase letter (a-z) and one digit."+add_length, true);
-                    is_valid = false;
-
-                    document.querySelector(".good-val-vpu").classList.add('d-none');
-                    document.querySelector(".bad-val-vpu").classList.add('d-none');
-                } else if(password_ev.value.trim().length<8) {
-                    funcs.alert_message(".bad-val-pu", ".good-val-pu", "<b>minimum eight characters<b>", true);
+                } else if(add_length !== "") {
+                    funcs.alert_message(".bad-val-pu", ".good-val-pu", add_length, true);
                     is_valid = false;
 
                     document.querySelector(".good-val-vpu").classList.add('d-none');
@@ -163,59 +206,41 @@ const main = {
                     funcs.alert_message(".bad-val-pu", ".good-val-pu", "", false);
 
                     // valid password validation
-                    if(!confirm_password_ev.value.trim()) {
-                        funcs.alert_message(".bad-val-vpu", ".good-val-vpu", "The Valid password must not be empty", true);
+                    if(funcs.is_empty(confirm_password_ev, ".bad-val-vpu", ".good-val-vpu", "Valid password"))
                         is_valid = false;
-                    } else if(confirm_password_ev.value.trim() !== password_ev.value.trim()) {
+                    else if(confirm_password_ev.value.trim() !== password_ev.value.trim()) {
                         funcs.alert_message(".bad-val-vpu", ".good-val-vpu", "The Valid password must match the first password field", true);
                         is_valid = false;
-                    } else {
+                    } else
                         funcs.alert_message(".bad-val-vpu", ".good-val-vpu", "", false);
-                    }
                 }
 
                 // date validation
-                if(!date_ev.value.trim()) {
-                    funcs.alert_message(".bad-val-du", ".good-val-du", "The date must not be empty", true);
+                if(funcs.is_empty(date_ev, ".bad-val-du", ".good-val-du", "date"))
                     is_valid = false;
-                } else {
-                    const dateObject = new Date(date_ev.value.trim()); // make date value
-                    if (!isNaN(dateObject.getTime())/*check if the date input is valid*/)
-                    {
-                        const currentDate = new Date();
-                        const userBirthDate = new Date(dateObject.getFullYear() + 18, dateObject.getMonth(), dateObject.getDate());
-                        if (userBirthDate > currentDate)
-                        {
-                            funcs.alert_message(".bad-val-du", ".good-val-du", "The user date must be at least 18 years old", true);
-                            is_valid = false
-                        } else {
-                            funcs.alert_message(".bad-val-du", ".good-val-du", "", false);
-                        }
-                    } else {
-                        funcs.alert_message(".bad-val-du", ".good-val-du", "the date input is not valid", true);
-                        is_valid = false
-                    }
+                else {
+                    if (!funcs.check_date(date_ev))
+                        is_valid = false;
                 }
 
                 // gender validation
                 if(gender_ev.selectedIndex === 0) {
                     funcs.alert_message(".bad-val-gu", ".good-val-gu", "You must to choose your Gender!", true);
                     is_valid = false;
-                } else {
+                } else
                     funcs.alert_message(".bad-val-gu", ".good-val-gu", "", false);
-                }
 
                 if(text_ev.value.trim().length > 100) {
                     funcs.alert_message(".bad-val-cu", "", "maximum of 100 characters", true);
                     is_valid = false;
-                } else {
+                } else
                     funcs.alert_message(".bad-val-cu", "", "", false);
-                }
 
                 if(is_valid)
                 {
                     document.querySelector(".no-exist-u").classList.add("d-none");
                     document.querySelector(".exist-u").classList.remove("d-none");
+
                     emails[email_ev.value.trim()] = {
                         first_name: first_name_ev.value.trim(),
                         last_name: last_name_ev.value.trim(),
@@ -238,29 +263,10 @@ const main = {
                     funcs.reset_alerts();
 
                     // sort the emails object
-                    const sortedKeys = Object.keys(emails).sort();
-                    const sortedObject = {};
-                    sortedKeys.forEach(key => {
-                        sortedObject[key] = emails[key];
-                    });
-                    emails = sortedObject;
+                    emails = funcs.sort_emails(emails);
                     //===============================
 
-                    let new_scope = "";
-                    let list = 0;
-                    for (const user in emails){
-                        new_scope += "<tr>\n" +
-                            "                    <th scope=\"row\">"+(++list).toString()+"</th>\n" +
-                            "                    <td>"+emails[user].first_name+"</td>\n" +
-                            "                    <td>"+emails[user].last_name+"</td>\n" +
-                            "                    <td>"+user+"</td>\n" +
-                            "                    <td>"+emails[user].password+"</td>\n" +
-                            "                    <td>"+emails[user].date+"</td>\n" +
-                            "                    <td>"+emails[user].gender+"</td>\n" +
-                            "                    <td>"+emails[user].text+"</td>\n" +
-                            "                </tr>";
-                    }
-                    document.querySelector("tbody").innerHTML = new_scope
+                    funcs.add_scope(emails);
                 }
             }
         })
