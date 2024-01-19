@@ -1,3 +1,4 @@
+
 const utilities = {
     az_pattern : /^[a-z]+\s*$/,
     email_pattern : /\S+@\S+ac\.il/,
@@ -23,124 +24,6 @@ const utilities = {
 // ===================================================================
 
 const funcs = {
-    click_sub_next(){
-        let is_valid = true;
-        if (page_num === PAGE_1)
-        {
-            // first name validation
-            if (this.validate_check(utilities.first_name_ev, utilities.az_pattern, ".bad-val-fu", ".good-val-fu", "first name", "The first name should only contain alphabets (a-z)"))
-                is_valid = false;
-            else
-                this.alert_message(".bad-val-fu", ".good-val-fu", "", false);
-
-            // last name validation
-            if (this.validate_check(utilities.last_name_ev, utilities.az_pattern, ".bad-val-lu", ".good-val-lu", "last name", "The last name should only contain alphabets (a-z)"))
-                is_valid = false;
-            else
-                this.alert_message(".bad-val-lu", ".good-val-lu", "", false);
-
-            //email validation
-            if (this.validate_check(utilities.email_ev, utilities.email_pattern, ".bad-val-eu", ".good-val-eu", "Email", "The Email should contain a valid email address from an Israeli academic institution (*.ac.il)"))
-                is_valid = false;
-            else if(utilities.email_ev.value.trim() in emails) {
-                this.alert_message(".bad-val-eu", ".good-val-eu", "The Email should be unique, one cannot record more than one user with same email.", true);
-                is_valid = false;
-            } else
-                this.alert_message(".bad-val-eu", ".good-val-eu", "", false);
-
-
-            if(is_valid)
-                this.next_click(utilities.elem_prev_none, utilities.elem_next_none, utilities.sub_next);
-        }
-        else
-        {
-            // password validation
-            let add_length = ""
-            if(utilities.password_ev.value.trim() && utilities.password_ev.value.trim().length<8)
-                add_length = " <b>minimum eight characters<b>";
-
-            if (this.validate_check(utilities.password_ev, utilities.password_pattern, ".bad-val-pu", ".good-val-pu", "password", "The password should only contain at least one uppercase letter(A-Z), one lowercase letter (a-z) and one digit."+add_length))
-            {
-                is_valid = false;
-
-                // remove the valid password alert
-                document.querySelector(".good-val-vpu").classList.add('d-none');
-                document.querySelector(".bad-val-vpu").classList.add('d-none');
-            } else if(add_length !== "") {
-                this.alert_message(".bad-val-pu", ".good-val-pu", add_length, true);
-                is_valid = false;
-
-                document.querySelector(".good-val-vpu").classList.add('d-none');
-                document.querySelector(".bad-val-vpu").classList.add('d-none');
-            } else {
-                this.alert_message(".bad-val-pu", ".good-val-pu", "", false);
-
-                // valid password validation
-                if(this.is_empty(utilities.confirm_password_ev, ".bad-val-vpu", ".good-val-vpu", "Valid password"))
-                    is_valid = false;
-                else if(utilities.confirm_password_ev.value.trim() !== utilities.password_ev.value.trim()) {
-                    this.alert_message(".bad-val-vpu", ".good-val-vpu", "The Valid password must match the first password field", true);
-                    is_valid = false;
-                } else
-                    this.alert_message(".bad-val-vpu", ".good-val-vpu", "", false);
-            }
-
-            // date validation
-            if(this.is_empty(utilities.date_ev, ".bad-val-du", ".good-val-du", "date"))
-                is_valid = false;
-            else {
-                if (!this.check_date(utilities.date_ev))
-                    is_valid = false;
-            }
-
-            // gender validation
-            if(utilities.gender_ev.selectedIndex === 0) {
-                this.alert_message(".bad-val-gu", ".good-val-gu", "You must to choose your Gender!", true);
-                is_valid = false;
-            } else
-                this.alert_message(".bad-val-gu", ".good-val-gu", "", false);
-
-            if(utilities.text_ev.value.trim().length > 100) {
-                this.alert_message(".bad-val-cu", "", "maximum of 100 characters", true);
-                is_valid = false;
-            } else
-                this.alert_message(".bad-val-cu", "", "", false);
-
-            if(is_valid)
-            {
-                document.querySelector(".no-exist-u").classList.add("d-none");
-                document.querySelector(".exist-u").classList.remove("d-none");
-
-                emails[utilities.email_ev.value.trim()] = {
-                    first_name: utilities.first_name_ev.value.trim(),
-                    last_name: utilities.last_name_ev.value.trim(),
-                    password: utilities.password_ev.value.trim(),
-                    date: utilities.date_ev.value.trim(),
-                    gender: genders[utilities.gender_ev.value.trim()-1],
-                    text: utilities.text_ev.value.trim(),
-                };
-
-                utilities.email_ev.value = "";
-                utilities.first_name_ev.value = "";
-                utilities.last_name_ev.value = "";
-                utilities.password_ev.value = "";
-                utilities.confirm_password_ev.value = "";
-                utilities.date_ev.value = "";
-                utilities.gender_ev.selectedIndex = 0;
-                utilities.text_ev.value = "";
-
-                this.prev_click(utilities.elem_prev_none, utilities.elem_next_none, utilities.sub_next);
-                this.reset_alerts();
-
-                // sort the emails object
-                emails = this.sort_emails(emails);
-                //===============================
-
-                this.add_scope(emails);
-            }
-        }
-    },
-
     alert_message(bad_lable, good_lable, message, is_bad)
     {
         let name_alert = document.querySelector(bad_lable);
@@ -274,10 +157,128 @@ const funcs = {
 
 const main = {
     main_func(){
-        utilities.sub_next.addEventListener("click", function() {funcs.click_sub_next()})
+        utilities.sub_next.addEventListener("click", function() {main.click_sub_next()})
 
         document.querySelector(".go-prev").addEventListener("click", function(){
             funcs.prev_click(utilities.elem_prev_none, utilities.elem_next_none, utilities.sub_next);
         })
+    },
+
+    click_sub_next(){
+        let is_valid = true;
+        if (page_num === PAGE_1)
+        {
+            // first name validation
+            if (funcs.validate_check(utilities.first_name_ev, utilities.az_pattern, ".bad-val-fu", ".good-val-fu", "first name", "The first name should only contain alphabets (a-z)"))
+                is_valid = false;
+            else
+                funcs.alert_message(".bad-val-fu", ".good-val-fu", "", false);
+
+            // last name validation
+            if (funcs.validate_check(utilities.last_name_ev, utilities.az_pattern, ".bad-val-lu", ".good-val-lu", "last name", "The last name should only contain alphabets (a-z)"))
+                is_valid = false;
+            else
+                funcs.alert_message(".bad-val-lu", ".good-val-lu", "", false);
+
+            //email validation
+            if (funcs.validate_check(utilities.email_ev, utilities.email_pattern, ".bad-val-eu", ".good-val-eu", "Email", "The Email should contain a valid email address from an Israeli academic institution (*.ac.il)"))
+                is_valid = false;
+            else if(utilities.email_ev.value.trim() in emails) {
+                funcs.alert_message(".bad-val-eu", ".good-val-eu", "The Email should be unique, one cannot record more than one user with same email.", true);
+                is_valid = false;
+            } else
+                funcs.alert_message(".bad-val-eu", ".good-val-eu", "", false);
+
+
+            if(is_valid)
+                funcs.next_click(utilities.elem_prev_none, utilities.elem_next_none, utilities.sub_next);
+        }
+        else
+        {
+            // password validation
+            let add_length = ""
+            if(utilities.password_ev.value.trim() && utilities.password_ev.value.trim().length<8)
+                add_length = " <b>minimum eight characters<b>";
+
+            if (funcs.validate_check(utilities.password_ev, utilities.password_pattern, ".bad-val-pu", ".good-val-pu", "password", "The password should only contain at least one uppercase letter(A-Z), one lowercase letter (a-z) and one digit."+add_length))
+            {
+                is_valid = false;
+
+                // remove the valid password alert
+                document.querySelector(".good-val-vpu").classList.add('d-none');
+                document.querySelector(".bad-val-vpu").classList.add('d-none');
+            } else if(add_length !== "") {
+                funcs.alert_message(".bad-val-pu", ".good-val-pu", add_length, true);
+                is_valid = false;
+
+                document.querySelector(".good-val-vpu").classList.add('d-none');
+                document.querySelector(".bad-val-vpu").classList.add('d-none');
+            } else {
+                funcs.alert_message(".bad-val-pu", ".good-val-pu", "", false);
+
+                // valid password validation
+                if(funcs.is_empty(utilities.confirm_password_ev, ".bad-val-vpu", ".good-val-vpu", "Valid password"))
+                    is_valid = false;
+                else if(utilities.confirm_password_ev.value.trim() !== utilities.password_ev.value.trim()) {
+                    funcs.alert_message(".bad-val-vpu", ".good-val-vpu", "The Valid password must match the first password field", true);
+                    is_valid = false;
+                } else
+                    funcs.alert_message(".bad-val-vpu", ".good-val-vpu", "", false);
+            }
+
+            // date validation
+            if(funcs.is_empty(utilities.date_ev, ".bad-val-du", ".good-val-du", "date"))
+                is_valid = false;
+            else {
+                if (!funcs.check_date(utilities.date_ev))
+                    is_valid = false;
+            }
+
+            // gender validation
+            if(utilities.gender_ev.selectedIndex === 0) {
+                funcs.alert_message(".bad-val-gu", ".good-val-gu", "You must to choose your Gender!", true);
+                is_valid = false;
+            } else
+                funcs.alert_message(".bad-val-gu", ".good-val-gu", "", false);
+
+            if(utilities.text_ev.value.trim().length > 100) {
+                funcs.alert_message(".bad-val-cu", "", "maximum of 100 characters", true);
+                is_valid = false;
+            } else
+                funcs.alert_message(".bad-val-cu", "", "", false);
+
+            if(is_valid)
+            {
+                document.querySelector(".no-exist-u").classList.add("d-none");
+                document.querySelector(".exist-u").classList.remove("d-none");
+
+                emails[utilities.email_ev.value.trim()] = {
+                    first_name: utilities.first_name_ev.value.trim(),
+                    last_name: utilities.last_name_ev.value.trim(),
+                    password: utilities.password_ev.value.trim(),
+                    date: utilities.date_ev.value.trim(),
+                    gender: genders[utilities.gender_ev.value.trim()-1],
+                    text: utilities.text_ev.value.trim(),
+                };
+
+                utilities.email_ev.value = "";
+                utilities.first_name_ev.value = "";
+                utilities.last_name_ev.value = "";
+                utilities.password_ev.value = "";
+                utilities.confirm_password_ev.value = "";
+                utilities.date_ev.value = "";
+                utilities.gender_ev.selectedIndex = 0;
+                utilities.text_ev.value = "";
+
+                funcs.prev_click(utilities.elem_prev_none, utilities.elem_next_none, utilities.sub_next);
+                funcs.reset_alerts();
+
+                // sort the emails object
+                emails = funcs.sort_emails(emails);
+                //===============================
+
+                funcs.add_scope(emails);
+            }
+        }
     },
 }
