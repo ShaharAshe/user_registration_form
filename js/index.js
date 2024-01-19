@@ -19,6 +19,9 @@ const utilities = {
     text_ev : document.querySelector("textarea"),
 }
 
+
+// ===================================================================
+
 const funcs = {
     click_sub_next(){
         let is_valid = true;
@@ -267,6 +270,7 @@ const funcs = {
 }
 
 
+// ======================================================================
 
 const main = {
     main_func(){
