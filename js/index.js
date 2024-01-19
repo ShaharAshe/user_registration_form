@@ -61,6 +61,18 @@ const funcs = {
         alerts_bunners.forEach(alert =>{
             alert.classList.add('d-none');
         })
+    },
+
+    validate_check(ev, pattern, bad, good, empty_msg, pattern_msg){
+        if(!ev.value.trim()) {
+            funcs.alert_message(bad, good, empty_msg, true);
+            return true;
+        }
+        if(!pattern.test(ev.value.trim())) {
+            funcs.alert_message(bad, good, pattern_msg, true);
+            return true;
+        }
+        return false;
     }
 }
 
@@ -90,47 +102,32 @@ const main = {
 
 
         sub_next.addEventListener("click", function(){
-
-
             let is_valid = true;
             if (page_num === PAGE_1)
             {
                 // first name validation
-                if(!first_name_ev.value.trim()) {
-                    funcs.alert_message(".bad-val-fu", ".good-val-fu", "The first name must not be empty", true);
+                if (funcs.validate_check(first_name_ev, az_pattern, ".bad-val-fu", ".good-val-fu", "The first name must not be empty", "The first name should only contain alphabets (a-z)"))
                     is_valid = false;
-                } else if(!az_pattern.test(first_name_ev.value.trim())) {
-                    funcs.alert_message(".bad-val-fu", ".good-val-fu", "The first name should only contain alphabets (a-z)", true);
-                    is_valid = false;
-                }
-                else {
+                else
                     funcs.alert_message(".bad-val-fu", ".good-val-fu", "", false);
-                }
 
                 // last name validation
-                if(!last_name_ev.value.trim()) {
-                    funcs.alert_message(".bad-val-lu", ".good-val-lu", "The last name must not be empty", true);
+                if (funcs.validate_check(last_name_ev, az_pattern, ".bad-val-lu", ".good-val-lu", "The last name must not be empty", "The last name should only contain alphabets (a-z)"))
                     is_valid = false;
-                } else if(!az_pattern.test(last_name_ev.value.trim())) {
-                    funcs.alert_message(".bad-val-lu", ".good-val-lu", "The last name should only contain alphabets (a-z)", true);
-                    is_valid = false;
-                } else {
+                else
                     funcs.alert_message(".bad-val-lu", ".good-val-lu", "", false);
-                }
+
 
                 //email validation
-                if(!email_ev.value.trim()) {
-                    funcs.alert_message(".bad-val-eu", ".good-val-eu", "The Email must not be empty", true);
+                if (funcs.validate_check(email_ev, email_pattern, ".bad-val-eu", ".good-val-eu", "The Email must not be empty", "The Email should contain a valid email address from an Israeli academic institution (*.ac.il)"))
                     is_valid = false;
-                } else if(email_ev.value.trim() in emails) {
+                else if(email_ev.value.trim() in emails) {
                     funcs.alert_message(".bad-val-eu", ".good-val-eu", "The Email should be unique, one cannot record more than one user with same email.", true);
                     is_valid = false;
-                } else if(!email_pattern.test(email_ev.value.trim())) {
-                    funcs.alert_message(".bad-val-eu", ".good-val-eu", "The Email should contain a valid email address from an Israeli academic institution (*.ac.il)", true);
-                    is_valid = false;
-                } else {
-                    funcs.alert_message(".bad-val-eu", ".good-val-eu", "", false);
                 }
+                else
+                    funcs.alert_message(".bad-val-eu", ".good-val-eu", "", false);
+
 
                 if(is_valid)
                     funcs.next_click(elem_prev_none, elem_next_none, sub_next);
