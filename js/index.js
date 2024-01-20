@@ -11,6 +11,7 @@
  * @property {NodeList} elem_next_none - NodeList of elements with class 'next-clicked'.
  * @property {NodeList} elem_prev_none - NodeList of elements with class 'prev-clicked'.
  * @property {HTMLElement} sub_next - Button element for next/submit action.
+ * @property {HTMLElement} go_prev - Button element for previous action.
  * @property {HTMLInputElement} first_name_ev - Input element for first name.
  * @property {HTMLInputElement} last_name_ev - Input element for last name.
  * @property {HTMLInputElement} email_ev - Input element for email.
@@ -21,29 +22,45 @@
  * @property {HTMLTextAreaElement} text_ev - TextArea element for additional text input.
  */
 const utilities = {
-    PAGE_1 : 0,
-    emails : {},
-    page_num : 0,
-    genders : ["Male", "Female", "Other"],
+    PAGE_1: 0,
+    emails: {},
+    page_num: 0,
+    genders: ["Male", "Female", "Other"],
 
-    az_pattern : /^[a-z]+\s*$/,
-    email_pattern : /\S+@\S+ac\.il/,
-    password_pattern : /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/,
+    az_pattern: /^[a-z]+\s*$/,
+    email_pattern: /\S+@\S+ac\.il/,
+    password_pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/,
 
+    elem_next_none: document.querySelectorAll('div .next-clicked'),
+    elem_prev_none: document.querySelectorAll('div .prev-clicked'),
 
-    elem_next_none : document.querySelectorAll('div .next-clicked'),
-    elem_prev_none : document.querySelectorAll('div .prev-clicked'),
+    sub_next: document.querySelector("div .sub-next"),
+    go_prev: document.querySelector("div .go-prev"),
 
-    sub_next : document.querySelector("div .sub-next"),
+    first_name_ev: document.getElementById("First-Name"),
+    last_name_ev: document.getElementById("Last-Name"),
+    email_ev: document.getElementById("Email"),
+    password_ev: document.getElementById("Password"),
+    confirm_password_ev: document.getElementById("Valid-Password"),
+    date_ev: document.getElementById("Date-Of-Birth"),
+    gender_ev: document.getElementById("Gender"),
+    text_ev: document.querySelector("textarea"),
 
-    first_name_ev : document.getElementById("First-Name"),
-    last_name_ev : document.getElementById("Last-Name"),
-    email_ev : document.getElementById("Email"),
-    password_ev : document.getElementById("Password"),
-    confirm_password_ev : document.getElementById("Valid-Password"),
-    date_ev : document.getElementById("Date-Of-Birth"),
-    gender_ev : document.getElementById("Gender"),
-    text_ev : document.querySelector("textarea"),
+    first_name_good : document.querySelector("div .good-val-fu"),
+    first_name_bad : document.querySelector("div .bad-val-fu"),
+    last_name_good : document.querySelector("div .good-val-lu"),
+    last_name_bad : document.querySelector("div .bad-val-lu"),
+    email_good : document.querySelector("div .good-val-eu"),
+    email_bad : document.querySelector("div .bad-val-eu"),
+    password_good : document.querySelector("div .good-val-pu"),
+    password_bad : document.querySelector("div .bad-val-pu"),
+    valid_password_good : document.querySelector("div .good-val-vpu"),
+    valid_password_bad : document.querySelector("div .bad-val-vpu"),
+    date_good :  document.querySelector("div .good-val-du"),
+    date_bad:document.querySelector("div .bad-val-du"),
+    gender_good : document.querySelector("div .good-val-gu"),
+    gender_bad : document.querySelector("div .bad-val-gu"),
+    comment_bad : document.querySelector("div .bad-val-cu"),
 }
 
 
@@ -300,7 +317,7 @@ const main = {
     main_func(){
         utilities.sub_next.addEventListener("click", function() {main.click_sub_next()})
 
-        document.querySelector(".go-prev").addEventListener("click", function(){
+        utilities.go_prev.addEventListener("click", function(){
             funcs.prev_click(utilities.elem_prev_none, utilities.elem_next_none, utilities.sub_next);
         })
     },
