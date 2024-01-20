@@ -73,24 +73,24 @@ const funcs = {
      * @param {string} message - Alert message to display.
      * @param {boolean} is_bad - Indicates whether the message is an error (true) or success (false).
      */
-    alert_message(bad_lable, good_lable, message, is_bad)
+    alert_message(bad_label, good_label, message, is_bad)
     {
-        let name_alert = document.querySelector(bad_lable);
+        let name_alert = document.querySelector(bad_label);
         name_alert.innerHTML = message;
 
         if (is_bad)
         {
             name_alert.classList.remove("d-none")
-            if(good_lable !== "") {
-                name_alert = document.querySelector(good_lable);
+            if(good_label !== "") {
+                name_alert = document.querySelector(good_label);
                 name_alert.classList.add("d-none")
             }
         }
         else
         {
             name_alert.classList.add("d-none")
-            if(good_lable !== "") {
-                name_alert = document.querySelector(good_lable);
+            if(good_label !== "") {
+                name_alert = document.querySelector(good_label);
                 name_alert.classList.remove("d-none")
             }
         }
@@ -147,9 +147,9 @@ const funcs = {
      */
     reset_alerts()
     {
-        const alerts_bunners = document.querySelectorAll('div .alert');
+        const alerts_banners = document.querySelectorAll('div .alert');
 
-        alerts_bunners.forEach(alert =>{
+        alerts_banners.forEach(alert =>{
             alert.classList.add('d-none');
         })
     },
