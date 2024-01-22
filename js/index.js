@@ -1,3 +1,43 @@
+/**
+ * @namespace utilities
+ * @description Contains utility variables for the form and page functionality.
+ * @property {number} PAGE_1 - Page number constant representing the first page.
+ * @property {Object} emails - Object to store user data with email addresses as keys.
+ * @property {number} page_num - Current page number.
+ * @property {string[]} genders - Array of available gender options.
+ * @property {RegExp} az_pattern - Regular expression for alphabetic input validation.
+ * @property {RegExp} email_pattern - Regular expression for email input validation.
+ * @property {RegExp} password_pattern - Regular expression for password input validation.
+ * @property {NodeList} elem_next_none - NodeList of elements with class 'next-clicked'.
+ * @property {NodeList} elem_prev_none - NodeList of elements with class 'prev-clicked'.
+ * @property {HTMLElement} sub_next - Button element for next/submit action.
+ * @property {HTMLElement} go_prev - Button element for previous action.
+ * @property {HTMLInputElement} first_name_ev - Input element for first name.
+ * @property {HTMLInputElement} last_name_ev - Input element for last name.
+ * @property {HTMLInputElement} email_ev - Input element for email.
+ * @property {HTMLInputElement} password_ev - Input element for password.
+ * @property {HTMLInputElement} confirm_password_ev - Input element for confirming password.
+ * @property {HTMLInputElement} date_ev - Input element for date of birth.
+ * @property {HTMLSelectElement} gender_ev - Select element for gender.
+ * @property {HTMLTextAreaElement} text_ev - TextArea element for additional text input.
+ * @property {HTMLElement} first_name_good - Good validation message for first name.
+ * @property {HTMLElement} first_name_bad - Bad validation message for first name.
+ * @property {HTMLElement} last_name_good - Good validation message for last name.
+ * @property {HTMLElement} last_name_bad - Bad validation message for last name.
+ * @property {HTMLElement} email_good - Good validation message for email.
+ * @property {HTMLElement} email_bad - Bad validation message for email.
+ * @property {HTMLElement} password_good - Good validation message for password.
+ * @property {HTMLElement} password_bad - Bad validation message for password.
+ * @property {HTMLElement} valid_password_good - Good validation message for valid password.
+ * @property {HTMLElement} valid_password_bad - Bad validation message for valid password.
+ * @property {HTMLElement} date_good - Good validation message for date.
+ * @property {HTMLElement} date_bad - Bad validation message for date.
+ * @property {HTMLElement} gender_good - Good validation message for gender.
+ * @property {HTMLElement} gender_bad - Bad validation message for gender.
+ * @property {HTMLElement} comment_bad - Bad validation message for additional text.
+ * @property {HTMLElement} user_no_exist - Message for non-existing user.
+ * @property {HTMLElement} user_exist - Message for existing user.
+ */
 const utilities = (function() {
     const PAGE_1 = 0;
     const emails = {};
@@ -84,7 +124,30 @@ const utilities = (function() {
 
 // ===================================================================
 
+/**
+ * @namespace funcs
+ * @description Contains utility functions for form validation and page navigation.
+ * @property {Function} alert_message - Displays validation messages.
+ * @property {Function} prev_click - Handles the 'previous' button click action.
+ * @property {Function} next_click - Handles the 'next' button click action.
+ * @property {Function} reset_alerts - Resets all validation messages.
+ * @property {Function} is_empty - Checks if a given input is empty.
+ * @property {Function} validate_check - Validates input based on a given pattern.
+ * @property {Function} sort_emails - Sorts the 'emails' object alphabetically.
+ * @property {Function} add_scope - Adds user data to the HTML table.
+ * @property {Function} check_date - Validates the user's date of birth.
+ * @property {Function} add_email - Adds user data to the 'emails' object.
+ * @property {Function} reset_form - Resets the form fields.
+ */
 const funcs = {
+    /**
+     * @function alert_message
+     * @param {HTMLElement} bad_label - Element to display a bad validation message.
+     * @param {HTMLElement} good_label - Element to display a good validation message.
+     * @param {string} message - The validation message to be displayed.
+     * @param {boolean} is_bad - Boolean indicating if the message is bad (true) or good (false).
+     * @description Displays validation messages based on input parameters.
+     */
     alert_message(bad_label, good_label, message, is_bad) {
         bad_label.innerHTML = message;
 
@@ -98,6 +161,14 @@ const funcs = {
                 good_label.classList.remove("d-none")
         }
     },
+
+    /**
+     * @function prev_click
+     * @param {NodeList} elem_prev_none - NodeList of elements with class 'prev-clicked'.
+     * @param {NodeList} elem_next_none - NodeList of elements with class 'next-clicked'.
+     * @param {HTMLElement} sub_next - Button element for next/submit action.
+     * @description Handles the 'previous' button click action.
+     */
     prev_click(elem_prev_none, elem_next_none, sub_next) {
         elem_prev_none.forEach(div => {
             div.classList.remove('d-none');
@@ -113,6 +184,14 @@ const funcs = {
         --utilities.page_num;
         sub_next.innerHTML = "Next";
     },
+
+    /**
+     * @function next_click
+     * @param {NodeList} elem_prev_none - NodeList of elements with class 'prev-clicked'.
+     * @param {NodeList} elem_next_none - NodeList of elements with class 'next-clicked'.
+     * @param {HTMLElement} sub_next - Button element for next/submit action.
+     * @description Handles the 'next' button click action.
+     */
     next_click(elem_prev_none, elem_next_none, sub_next) {
         elem_next_none.forEach(div => {
             div.classList.remove('d-none');
@@ -127,6 +206,11 @@ const funcs = {
         sub_next.classList.add("btn-success")
         ++utilities.page_num;
     },
+
+    /**
+     * @function reset_alerts
+     * @description Resets all validation messages.
+     */
     reset_alerts() {
         const alerts_banners = document.querySelectorAll('div .alert');
 
@@ -134,6 +218,16 @@ const funcs = {
             alert.classList.add('d-none');
         })
     },
+
+    /**
+     * @function is_empty
+     * @param {HTMLInputElement} ev - The input element to be checked for emptiness.
+     * @param {HTMLElement} bad - Element to display a bad validation message.
+     * @param {HTMLElement} good - Element to display a good validation message.
+     * @param {string} empty_field - The name of the field being checked.
+     * @returns {boolean} Returns true if the input is empty, false otherwise.
+     * @description Checks if a given input is empty.
+     */
     is_empty(ev, bad, good, empty_field) {
         if (!ev.value.trim()) {
             this.alert_message(bad, good, "The " + empty_field + " must not be empty", true);
@@ -141,6 +235,18 @@ const funcs = {
         }
         return false;
     },
+
+    /**
+     * @function validate_check
+     * @param {HTMLInputElement} ev - The input element to be validated.
+     * @param {RegExp} pattern - Regular expression pattern for validation.
+     * @param {HTMLElement} bad - Element to display a bad validation message.
+     * @param {HTMLElement} good - Element to display a good validation message.
+     * @param {string} empty_field - The name of the field being checked.
+     * @param {string} pattern_msg - The message to be displayed if the pattern is not matched.
+     * @returns {boolean} Returns true if validation fails, false otherwise.
+     * @description Validates input based on a given pattern.
+     */
     validate_check(ev, pattern, bad, good, empty_field, pattern_msg) {
         if (this.is_empty(ev, bad, good, empty_field))
             return true;
@@ -150,6 +256,11 @@ const funcs = {
         }
         return false;
     },
+
+    /**
+     * @function sort_emails
+     * @description Sorts the 'emails' object alphabetically.
+     */
     sort_emails() {
         // sort the emails object
         const sortedKeys = Object.keys(utilities.emails).sort();
@@ -159,6 +270,11 @@ const funcs = {
         });
         utilities.emails = sortedObject;
     },
+
+    /**
+     * @function add_scope
+     * @description Adds user data to the HTML table.
+     */
     add_scope() {
         let new_scope = "";
         let list = 0;
@@ -177,6 +293,12 @@ const funcs = {
         }
         document.querySelector("tbody").innerHTML = new_scope
     },
+
+    /**
+     * @function check_date
+     * @returns {boolean} Returns true if the date is valid, false otherwise.
+     * @description Validates the user's date of birth.
+     */
     check_date() {
         const dateObject = new Date(utilities.date_ev.value.trim()); // make date value
         if (!isNaN(dateObject.getTime())/*check if the date input is valid*/) {
@@ -193,6 +315,11 @@ const funcs = {
         this.alert_message(utilities.date_bad, utilities.date_good, "the date input is not valid", true);
         return false;
     },
+
+    /**
+     * @function add_email
+     * @description Adds user data to the 'emails' object.
+     */
     add_email() {
         utilities.emails[utilities.email_ev.value.trim()] = {
             first_name: utilities.first_name_ev.value.trim(),
@@ -203,6 +330,11 @@ const funcs = {
             text: utilities.text_ev.value.trim(),
         };
     },
+
+    /**
+     * @function reset_form
+     * @description Resets the form fields.
+     */
     reset_form() {
         utilities.email_ev.value = "";
         utilities.first_name_ev.value = "";
@@ -217,7 +349,17 @@ const funcs = {
 
 // ======================================================================
 
+/**
+ * @namespace main
+ * @description Contains the main functionality for form navigation and submission.
+ * @property {Function} main_func - Initializes event listeners for form navigation.
+ * @property {Function} click_sub_next - Handles the 'next/submit' button click action.
+ */
 const main = {
+    /**
+     * @function main_func
+     * @description Initializes event listeners for form navigation.
+     */
     main_func() {
         utilities.sub_next.addEventListener("click", function () {
             main.click_sub_next()
@@ -227,6 +369,11 @@ const main = {
             funcs.prev_click(utilities.elem_prev_none, utilities.elem_next_none, utilities.sub_next);
         })
     },
+
+    /**
+     * @function click_sub_next
+     * @description Handles the 'next/submit' button click action.
+     */
     click_sub_next() {
         let is_valid = true;
         if (utilities.page_num === utilities.PAGE_1) {
