@@ -259,16 +259,20 @@ const funcs = (function (){
         },
 
         /**
-         * @function sort_emails
-         * @description Sorts the 'emails' object alphabetically.
+         * @function sort_users
+         * @description Sorts the 'emails' object alphabetically by last_name.
          */
-        sort_emails: function() {
+        sort_users: function() {
             // sort the emails object
-            const sortedKeys = Object.keys(utilities.emails).sort();
-            const sortedObject = {};
-            sortedKeys.forEach(key => {
-                sortedObject[key] = utilities.emails[key];
+            const emailsArray = Object.values(utilities.emails);
+            emailsArray.sort((a, b) => a.last_name.localeCompare(b.last_name));
+
+            const sortedObject = {}
+            emailsArray.forEach(user => {
+                // Assuming each email object has a unique identifier (e.g., email address)
+                sortedObject[user.email_address] = user;
             });
+
             utilities.emails = sortedObject;
         },
 
@@ -325,6 +329,7 @@ const funcs = (function (){
             utilities.emails[utilities.email_ev.value.trim()] = {
                 first_name: utilities.first_name_ev.value.trim(),
                 last_name: utilities.last_name_ev.value.trim(),
+                email_address: utilities.email_ev.value.trim(),
                 password: utilities.password_ev.value.trim(),
                 date: utilities.date_ev.value.trim(),
                 gender: utilities.genders[utilities.gender_ev.value.trim() - 1],
