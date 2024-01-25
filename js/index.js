@@ -133,7 +133,7 @@ const utilities = (function() {
  * @property {Function} reset_alerts - Resets all validation messages.
  * @property {Function} is_empty - Checks if a given input is empty.
  * @property {Function} validate_check - Validates input based on a given pattern.
- * @property {Function} sort_emails - Sorts the 'emails' object alphabetically.
+ * @property {Function} sort_users - Sorts the 'emails' object alphabetically by last_name.
  * @property {Function} add_scope - Adds user data to the HTML table.
  * @property {Function} check_date - Validates the user's date of birth.
  * @property {Function} add_email - Adds user data to the 'emails' object.
@@ -362,121 +362,123 @@ const funcs = (function (){
  * @property {Function} main_func - Initializes event listeners for form navigation.
  * @property {Function} click_sub_next - Handles the 'next/submit' button click action.
  */
-const main = {
-    /**
-     * @function main_func
-     * @description Initializes event listeners for form navigation.
-     */
-    main_func() {
-        utilities.sub_next.addEventListener("click", function () {
-            main.click_sub_next()
-        })
+const main = (function () {
+    return {
+        /**
+         * @function main_func
+         * @description Initializes event listeners for form navigation.
+         */
+        main_func: function () {
+            utilities.sub_next.addEventListener("click", function () {
+                main.click_sub_next()
+            })
 
-        utilities.go_prev.addEventListener("click", function () {
-            funcs.prev_click(utilities.elem_prev_none, utilities.elem_next_none, utilities.sub_next);
-        })
-    },
+            utilities.go_prev.addEventListener("click", function () {
+                funcs.prev_click(utilities.elem_prev_none, utilities.elem_next_none, utilities.sub_next);
+            })
+        },
 
-    /**
-     * @function click_sub_next
-     * @description Handles the 'next/submit' button click action.
-     */
-    click_sub_next() {
-        let is_valid = true;
-        if (utilities.page_num === utilities.PAGE_1) {
-            // first name validation
-            if (funcs.validate_check(utilities.first_name_ev, utilities.az_pattern, utilities.first_name_bad, utilities.first_name_good, "first name", "The first name should only contain alphabets (a-z)"))
-                is_valid = false;
-            else
-                funcs.alert_message(utilities.first_name_bad, utilities.first_name_good, "", false);
-
-            // last name validation
-            if (funcs.validate_check(utilities.last_name_ev, utilities.az_pattern, utilities.last_name_bad, utilities.last_name_good, "last name", "The last name should only contain alphabets (a-z)"))
-                is_valid = false;
-            else
-                funcs.alert_message(utilities.last_name_bad, utilities.last_name_good, "", false);
-
-            //email validation
-            if (funcs.validate_check(utilities.email_ev, utilities.email_pattern, utilities.email_bad, utilities.email_good, "Email", "The Email should contain a valid email address from an Israeli academic institution (*.ac.il)"))
-                is_valid = false;
-            else if (utilities.email_ev.value.trim() in utilities.emails) {
-                funcs.alert_message(utilities.email_bad, utilities.email_good, "The Email should be unique, one cannot record more than one user with same email.", true);
-                is_valid = false;
-            } else
-                funcs.alert_message(utilities.email_bad, utilities.email_good, "", false);
-
-
-            if (is_valid)
-                funcs.next_click(utilities.elem_prev_none, utilities.elem_next_none, utilities.sub_next);
-        } else {
-            // password validation
-            let add_length = ""
-            if (utilities.password_ev.value.trim() && utilities.password_ev.value.trim().length < 8)
-                add_length = " <b>minimum eight characters<b>";
-
-            if (funcs.validate_check(utilities.password_ev, utilities.password_pattern, utilities.password_bad, utilities.password_good, "password", "The password should only contain at least one uppercase letter(A-Z), one lowercase letter (a-z) and one digit." + add_length)) {
-                is_valid = false;
-
-                // remove the valid password alert
-                utilities.valid_password_good.classList.add('d-none');
-                utilities.valid_password_bad.classList.add('d-none');
-            } else if (add_length !== "") {
-                funcs.alert_message(utilities.password_bad, utilities.password_good, add_length, true);
-                is_valid = false;
-
-                utilities.valid_password_good.classList.add('d-none');
-                utilities.valid_password_bad.classList.add('d-none');
-            } else {
-                funcs.alert_message(utilities.password_bad, utilities.password_good, "", false);
-
-                // valid password validation
-                if (funcs.is_empty(utilities.confirm_password_ev, utilities.valid_password_bad, utilities.valid_password_good, "Valid password"))
+        /**
+         * @function click_sub_next
+         * @description Handles the 'next/submit' button click action.
+         */
+        click_sub_next: function () {
+            let is_valid = true;
+            if (utilities.page_num === utilities.PAGE_1) {
+                // first name validation
+                if (funcs.validate_check(utilities.first_name_ev, utilities.az_pattern, utilities.first_name_bad, utilities.first_name_good, "first name", "The first name should only contain alphabets (a-z)"))
                     is_valid = false;
-                else if (utilities.confirm_password_ev.value.trim() !== utilities.password_ev.value.trim()) {
-                    funcs.alert_message(utilities.valid_password_bad, utilities.valid_password_good, "The Valid password must match the first password field", true);
+                else
+                    funcs.alert_message(utilities.first_name_bad, utilities.first_name_good, "", false);
+
+                // last name validation
+                if (funcs.validate_check(utilities.last_name_ev, utilities.az_pattern, utilities.last_name_bad, utilities.last_name_good, "last name", "The last name should only contain alphabets (a-z)"))
+                    is_valid = false;
+                else
+                    funcs.alert_message(utilities.last_name_bad, utilities.last_name_good, "", false);
+
+                //email validation
+                if (funcs.validate_check(utilities.email_ev, utilities.email_pattern, utilities.email_bad, utilities.email_good, "Email", "The Email should contain a valid email address from an Israeli academic institution (*.ac.il)"))
+                    is_valid = false;
+                else if (utilities.email_ev.value.trim() in utilities.emails) {
+                    funcs.alert_message(utilities.email_bad, utilities.email_good, "The Email should be unique, one cannot record more than one user with same email.", true);
                     is_valid = false;
                 } else
-                    funcs.alert_message(utilities.valid_password_bad, utilities.valid_password_good, "", false);
-            }
+                    funcs.alert_message(utilities.email_bad, utilities.email_good, "", false);
 
-            // date validation
-            if (funcs.is_empty(utilities.date_ev, utilities.date_bad, utilities.date_good, "date"))
-                is_valid = false;
-            else {
-                if (!funcs.check_date())
+
+                if (is_valid)
+                    funcs.next_click(utilities.elem_prev_none, utilities.elem_next_none, utilities.sub_next);
+            } else {
+                // password validation
+                let add_length = ""
+                if (utilities.password_ev.value.trim() && utilities.password_ev.value.trim().length < 8)
+                    add_length = " <b>minimum eight characters<b>";
+
+                if (funcs.validate_check(utilities.password_ev, utilities.password_pattern, utilities.password_bad, utilities.password_good, "password", "The password should only contain at least one uppercase letter(A-Z), one lowercase letter (a-z) and one digit." + add_length)) {
                     is_valid = false;
+
+                    // remove the valid password alert
+                    utilities.valid_password_good.classList.add('d-none');
+                    utilities.valid_password_bad.classList.add('d-none');
+                } else if (add_length !== "") {
+                    funcs.alert_message(utilities.password_bad, utilities.password_good, add_length, true);
+                    is_valid = false;
+
+                    utilities.valid_password_good.classList.add('d-none');
+                    utilities.valid_password_bad.classList.add('d-none');
+                } else {
+                    funcs.alert_message(utilities.password_bad, utilities.password_good, "", false);
+
+                    // valid password validation
+                    if (funcs.is_empty(utilities.confirm_password_ev, utilities.valid_password_bad, utilities.valid_password_good, "Valid password"))
+                        is_valid = false;
+                    else if (utilities.confirm_password_ev.value.trim() !== utilities.password_ev.value.trim()) {
+                        funcs.alert_message(utilities.valid_password_bad, utilities.valid_password_good, "The Valid password must match the first password field", true);
+                        is_valid = false;
+                    } else
+                        funcs.alert_message(utilities.valid_password_bad, utilities.valid_password_good, "", false);
+                }
+
+                // date validation
+                if (funcs.is_empty(utilities.date_ev, utilities.date_bad, utilities.date_good, "date"))
+                    is_valid = false;
+                else {
+                    if (!funcs.check_date())
+                        is_valid = false;
+                }
+
+                // gender validation
+                if (utilities.gender_ev.selectedIndex === 0) {
+                    funcs.alert_message(utilities.gender_bad, utilities.gender_good, "You must to choose your Gender!", true);
+                    is_valid = false;
+                } else
+                    funcs.alert_message(utilities.gender_bad, utilities.gender_good, "", false);
+
+                if (utilities.text_ev.value.trim().length > 100) {
+                    funcs.alert_message(utilities.comment_bad, "", "maximum of 100 characters", true);
+                    is_valid = false;
+                } else
+                    funcs.alert_message(utilities.comment_bad, "", "", false);
+
+                if (is_valid) {
+                    utilities.user_no_exist.classList.add("d-none");
+                    utilities.user_exist.classList.remove("d-none");
+
+                    funcs.add_email();
+
+                    funcs.reset_form();
+
+                    funcs.prev_click(utilities.elem_prev_none, utilities.elem_next_none, utilities.sub_next);
+                    funcs.reset_alerts();
+
+                    // sort the emails object
+                    funcs.sort_users();
+                    //===============================
+
+                    funcs.add_scope();
+                }
             }
-
-            // gender validation
-            if (utilities.gender_ev.selectedIndex === 0) {
-                funcs.alert_message(utilities.gender_bad, utilities.gender_good, "You must to choose your Gender!", true);
-                is_valid = false;
-            } else
-                funcs.alert_message(utilities.gender_bad, utilities.gender_good, "", false);
-
-            if (utilities.text_ev.value.trim().length > 100) {
-                funcs.alert_message(utilities.comment_bad, "", "maximum of 100 characters", true);
-                is_valid = false;
-            } else
-                funcs.alert_message(utilities.comment_bad, "", "", false);
-
-            if (is_valid) {
-                utilities.user_no_exist.classList.add("d-none");
-                utilities.user_exist.classList.remove("d-none");
-
-                funcs.add_email();
-
-                funcs.reset_form();
-
-                funcs.prev_click(utilities.elem_prev_none, utilities.elem_next_none, utilities.sub_next);
-                funcs.reset_alerts();
-
-                // sort the emails object
-                funcs.sort_emails();
-                //===============================
-
-                funcs.add_scope();
-            }
-        }
-    },
-}
+        },
+    }
+})()
