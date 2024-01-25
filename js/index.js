@@ -139,213 +139,215 @@ const utilities = (function() {
  * @property {Function} add_email - Adds user data to the 'emails' object.
  * @property {Function} reset_form - Resets the form fields.
  */
-const funcs = {
-    /**
-     * @function alert_message
-     * @param {HTMLElement} bad_label - Element to display a bad validation message.
-     * @param {HTMLElement} good_label - Element to display a good validation message.
-     * @param {string} message - The validation message to be displayed.
-     * @param {boolean} is_bad - Boolean indicating if the message is bad (true) or good (false).
-     * @description Displays validation messages based on input parameters.
-     */
-    alert_message(bad_label, good_label, message, is_bad) {
-        bad_label.innerHTML = message;
+const funcs = (function (){
+    return {
+        /**
+         * @function alert_message
+         * @param {HTMLElement} bad_label - Element to display a bad validation message.
+         * @param {HTMLElement} good_label - Element to display a good validation message.
+         * @param {string} message - The validation message to be displayed.
+         * @param {boolean} is_bad - Boolean indicating if the message is bad (true) or good (false).
+         * @description Displays validation messages based on input parameters.
+         */
+        alert_message: function (bad_label, good_label, message, is_bad) {
+            bad_label.innerHTML = message;
 
-        if (is_bad) {
-            bad_label.classList.remove("d-none")
-            if (good_label !== "")
-                good_label.classList.add("d-none")
-        } else {
-            bad_label.classList.add("d-none")
-            if (good_label !== "")
-                good_label.classList.remove("d-none")
-        }
-    },
-
-    /**
-     * @function prev_click
-     * @param {NodeList} elem_prev_none - NodeList of elements with class 'prev-clicked'.
-     * @param {NodeList} elem_next_none - NodeList of elements with class 'next-clicked'.
-     * @param {HTMLElement} sub_next - Button element for next/submit action.
-     * @description Handles the 'previous' button click action.
-     */
-    prev_click(elem_prev_none, elem_next_none, sub_next) {
-        elem_prev_none.forEach(div => {
-            div.classList.remove('d-none');
-        });
-
-        elem_next_none.forEach(div => {
-            div.classList.add('d-none');
-        });
-
-        sub_next.classList.remove("btn-success");
-        sub_next.classList.add("btn-primary");
-
-        --utilities.page_num;
-        sub_next.innerHTML = "Next";
-    },
-
-    /**
-     * @function next_click
-     * @param {NodeList} elem_prev_none - NodeList of elements with class 'prev-clicked'.
-     * @param {NodeList} elem_next_none - NodeList of elements with class 'next-clicked'.
-     * @param {HTMLElement} sub_next - Button element for next/submit action.
-     * @description Handles the 'next' button click action.
-     */
-    next_click(elem_prev_none, elem_next_none, sub_next) {
-        elem_next_none.forEach(div => {
-            div.classList.remove('d-none');
-        });
-
-        elem_prev_none.forEach(div => {
-            div.classList.add('d-none');
-        });
-
-        sub_next.innerHTML = "Submit";
-        sub_next.classList.remove("btn-primary")
-        sub_next.classList.add("btn-success")
-        ++utilities.page_num;
-    },
-
-    /**
-     * @function reset_alerts
-     * @description Resets all validation messages.
-     */
-    reset_alerts() {
-        const alerts_banners = document.querySelectorAll('div .alert');
-
-        alerts_banners.forEach(alert => {
-            alert.classList.add('d-none');
-        })
-    },
-
-    /**
-     * @function is_empty
-     * @param {HTMLInputElement} ev - The input element to be checked for emptiness.
-     * @param {HTMLElement} bad - Element to display a bad validation message.
-     * @param {HTMLElement} good - Element to display a good validation message.
-     * @param {string} empty_field - The name of the field being checked.
-     * @returns {boolean} Returns true if the input is empty, false otherwise.
-     * @description Checks if a given input is empty.
-     */
-    is_empty(ev, bad, good, empty_field) {
-        if (!ev.value.trim()) {
-            this.alert_message(bad, good, "The " + empty_field + " must not be empty", true);
-            return true;
-        }
-        return false;
-    },
-
-    /**
-     * @function validate_check
-     * @param {HTMLInputElement} ev - The input element to be validated.
-     * @param {RegExp} pattern - Regular expression pattern for validation.
-     * @param {HTMLElement} bad - Element to display a bad validation message.
-     * @param {HTMLElement} good - Element to display a good validation message.
-     * @param {string} empty_field - The name of the field being checked.
-     * @param {string} pattern_msg - The message to be displayed if the pattern is not matched.
-     * @returns {boolean} Returns true if validation fails, false otherwise.
-     * @description Validates input based on a given pattern.
-     */
-    validate_check(ev, pattern, bad, good, empty_field, pattern_msg) {
-        if (this.is_empty(ev, bad, good, empty_field))
-            return true;
-        if (!pattern.test(ev.value.trim())) {
-            this.alert_message(bad, good, pattern_msg, true);
-            return true;
-        }
-        return false;
-    },
-
-    /**
-     * @function sort_emails
-     * @description Sorts the 'emails' object alphabetically.
-     */
-    sort_emails() {
-        // sort the emails object
-        const sortedKeys = Object.keys(utilities.emails).sort();
-        const sortedObject = {};
-        sortedKeys.forEach(key => {
-            sortedObject[key] = utilities.emails[key];
-        });
-        utilities.emails = sortedObject;
-    },
-
-    /**
-     * @function add_scope
-     * @description Adds user data to the HTML table.
-     */
-    add_scope() {
-        let new_scope = "";
-        let list = 0;
-
-        for (const user in utilities.emails) {
-            new_scope += "<tr>\n" +
-                "                    <th scope=\"row\">" + (++list).toString() + "</th>\n" +
-                "                    <td>" + utilities.emails[user].first_name + "</td>\n" +
-                "                    <td>" + utilities.emails[user].last_name + "</td>\n" +
-                "                    <td>" + user + "</td>\n" +
-                "                    <td>" + utilities.emails[user].password + "</td>\n" +
-                "                    <td>" + utilities.emails[user].date + "</td>\n" +
-                "                    <td>" + utilities.emails[user].gender + "</td>\n" +
-                "                    <td>" + utilities.emails[user].text + "</td>\n" +
-                "                </tr>";
-        }
-        document.querySelector("tbody").innerHTML = new_scope
-    },
-
-    /**
-     * @function check_date
-     * @returns {boolean} Returns true if the date is valid, false otherwise.
-     * @description Validates the user's date of birth.
-     */
-    check_date() {
-        const dateObject = new Date(utilities.date_ev.value.trim()); // make date value
-        if (!isNaN(dateObject.getTime())/*check if the date input is valid*/) {
-            const currentDate = new Date();
-            const userBirthDate = new Date(dateObject.getFullYear() + 18, dateObject.getMonth(), dateObject.getDate());
-            if (userBirthDate > currentDate) {
-                this.alert_message(utilities.date_bad, utilities.date_good, "The user date must be at least 18 years old", true);
-                return false;
+            if (is_bad) {
+                bad_label.classList.remove("d-none")
+                if (good_label !== "")
+                    good_label.classList.add("d-none")
+            } else {
+                bad_label.classList.add("d-none")
+                if (good_label !== "")
+                    good_label.classList.remove("d-none")
             }
-            // good date
-            this.alert_message(utilities.date_bad, utilities.date_good, "", false);
-            return true;
-        }
-        this.alert_message(utilities.date_bad, utilities.date_good, "the date input is not valid", true);
-        return false;
-    },
+        },
 
-    /**
-     * @function add_email
-     * @description Adds user data to the 'emails' object.
-     */
-    add_email() {
-        utilities.emails[utilities.email_ev.value.trim()] = {
-            first_name: utilities.first_name_ev.value.trim(),
-            last_name: utilities.last_name_ev.value.trim(),
-            password: utilities.password_ev.value.trim(),
-            date: utilities.date_ev.value.trim(),
-            gender: utilities.genders[utilities.gender_ev.value.trim() - 1],
-            text: utilities.text_ev.value.trim(),
-        };
-    },
+        /**
+         * @function prev_click
+         * @param {NodeList} elem_prev_none - NodeList of elements with class 'prev-clicked'.
+         * @param {NodeList} elem_next_none - NodeList of elements with class 'next-clicked'.
+         * @param {HTMLElement} sub_next - Button element for next/submit action.
+         * @description Handles the 'previous' button click action.
+         */
+        prev_click: function(elem_prev_none, elem_next_none, sub_next) {
+            elem_prev_none.forEach(div => {
+                div.classList.remove('d-none');
+            });
 
-    /**
-     * @function reset_form
-     * @description Resets the form fields.
-     */
-    reset_form() {
-        utilities.email_ev.value = "";
-        utilities.first_name_ev.value = "";
-        utilities.last_name_ev.value = "";
-        utilities.password_ev.value = "";
-        utilities.confirm_password_ev.value = "";
-        utilities.date_ev.value = "";
-        utilities.gender_ev.selectedIndex = 0;
-        utilities.text_ev.value = "";
-    },
-}
+            elem_next_none.forEach(div => {
+                div.classList.add('d-none');
+            });
+
+            sub_next.classList.remove("btn-success");
+            sub_next.classList.add("btn-primary");
+
+            --utilities.page_num;
+            sub_next.innerHTML = "Next";
+        },
+
+        /**
+         * @function next_click
+         * @param {NodeList} elem_prev_none - NodeList of elements with class 'prev-clicked'.
+         * @param {NodeList} elem_next_none - NodeList of elements with class 'next-clicked'.
+         * @param {HTMLElement} sub_next - Button element for next/submit action.
+         * @description Handles the 'next' button click action.
+         */
+        next_click: function(elem_prev_none, elem_next_none, sub_next) {
+            elem_next_none.forEach(div => {
+                div.classList.remove('d-none');
+            });
+
+            elem_prev_none.forEach(div => {
+                div.classList.add('d-none');
+            });
+
+            sub_next.innerHTML = "Submit";
+            sub_next.classList.remove("btn-primary")
+            sub_next.classList.add("btn-success")
+            ++utilities.page_num;
+        },
+
+        /**
+         * @function reset_alerts
+         * @description Resets all validation messages.
+         */
+        reset_alerts: function() {
+            const alerts_banners = document.querySelectorAll('div .alert');
+
+            alerts_banners.forEach(alert => {
+                alert.classList.add('d-none');
+            })
+        },
+
+        /**
+         * @function is_empty
+         * @param {HTMLInputElement} ev - The input element to be checked for emptiness.
+         * @param {HTMLElement} bad - Element to display a bad validation message.
+         * @param {HTMLElement} good - Element to display a good validation message.
+         * @param {string} empty_field - The name of the field being checked.
+         * @returns {boolean} Returns true if the input is empty, false otherwise.
+         * @description Checks if a given input is empty.
+         */
+        is_empty: function(ev, bad, good, empty_field) {
+            if (!ev.value.trim()) {
+                this.alert_message(bad, good, "The " + empty_field + " must not be empty", true);
+                return true;
+            }
+            return false;
+        },
+
+        /**
+         * @function validate_check
+         * @param {HTMLInputElement} ev - The input element to be validated.
+         * @param {RegExp} pattern - Regular expression pattern for validation.
+         * @param {HTMLElement} bad - Element to display a bad validation message.
+         * @param {HTMLElement} good - Element to display a good validation message.
+         * @param {string} empty_field - The name of the field being checked.
+         * @param {string} pattern_msg - The message to be displayed if the pattern is not matched.
+         * @returns {boolean} Returns true if validation fails, false otherwise.
+         * @description Validates input based on a given pattern.
+         */
+        validate_check: function(ev, pattern, bad, good, empty_field, pattern_msg) {
+            if (this.is_empty(ev, bad, good, empty_field))
+                return true;
+            if (!pattern.test(ev.value.trim())) {
+                this.alert_message(bad, good, pattern_msg, true);
+                return true;
+            }
+            return false;
+        },
+
+        /**
+         * @function sort_emails
+         * @description Sorts the 'emails' object alphabetically.
+         */
+        sort_emails: function() {
+            // sort the emails object
+            const sortedKeys = Object.keys(utilities.emails).sort();
+            const sortedObject = {};
+            sortedKeys.forEach(key => {
+                sortedObject[key] = utilities.emails[key];
+            });
+            utilities.emails = sortedObject;
+        },
+
+        /**
+         * @function add_scope
+         * @description Adds user data to the HTML table.
+         */
+        add_scope: function() {
+            let new_scope = "";
+            let list = 0;
+
+            for (const user in utilities.emails) {
+                new_scope += "<tr>\n" +
+                    "                    <th scope=\"row\">" + (++list).toString() + "</th>\n" +
+                    "                    <td>" + utilities.emails[user].first_name + "</td>\n" +
+                    "                    <td>" + utilities.emails[user].last_name + "</td>\n" +
+                    "                    <td>" + user + "</td>\n" +
+                    "                    <td>" + utilities.emails[user].password + "</td>\n" +
+                    "                    <td>" + utilities.emails[user].date + "</td>\n" +
+                    "                    <td>" + utilities.emails[user].gender + "</td>\n" +
+                    "                    <td>" + utilities.emails[user].text + "</td>\n" +
+                    "                </tr>";
+            }
+            document.querySelector("tbody").innerHTML = new_scope
+        },
+
+        /**
+         * @function check_date
+         * @returns {boolean} Returns true if the date is valid, false otherwise.
+         * @description Validates the user's date of birth.
+         */
+        check_date: function() {
+            const dateObject = new Date(utilities.date_ev.value.trim()); // make date value
+            if (!isNaN(dateObject.getTime())/*check if the date input is valid*/) {
+                const currentDate = new Date();
+                const userBirthDate = new Date(dateObject.getFullYear() + 18, dateObject.getMonth(), dateObject.getDate());
+                if (userBirthDate > currentDate) {
+                    this.alert_message(utilities.date_bad, utilities.date_good, "The user date must be at least 18 years old", true);
+                    return false;
+                }
+                // good date
+                this.alert_message(utilities.date_bad, utilities.date_good, "", false);
+                return true;
+            }
+            this.alert_message(utilities.date_bad, utilities.date_good, "the date input is not valid", true);
+            return false;
+        },
+
+        /**
+         * @function add_email
+         * @description Adds user data to the 'emails' object.
+         */
+        add_email: function() {
+            utilities.emails[utilities.email_ev.value.trim()] = {
+                first_name: utilities.first_name_ev.value.trim(),
+                last_name: utilities.last_name_ev.value.trim(),
+                password: utilities.password_ev.value.trim(),
+                date: utilities.date_ev.value.trim(),
+                gender: utilities.genders[utilities.gender_ev.value.trim() - 1],
+                text: utilities.text_ev.value.trim(),
+            };
+        },
+
+        /**
+         * @function reset_form
+         * @description Resets the form fields.
+         */
+        reset_form: function() {
+            utilities.email_ev.value = "";
+            utilities.first_name_ev.value = "";
+            utilities.last_name_ev.value = "";
+            utilities.password_ev.value = "";
+            utilities.confirm_password_ev.value = "";
+            utilities.date_ev.value = "";
+            utilities.gender_ev.selectedIndex = 0;
+            utilities.text_ev.value = "";
+        },
+    }
+})();
 
 // ======================================================================
 
