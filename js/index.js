@@ -46,7 +46,7 @@ const utilities = (function() {
 
     const az_pattern = /^[a-z]+\s*$/;
     const email_pattern = /\S+@\S+ac\.il/;
-    const password_pattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
+    const password_pattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/;
 
     const elem_next_none = document.querySelectorAll('div .next-clicked');
     const elem_prev_none = document.querySelectorAll('div .prev-clicked');
